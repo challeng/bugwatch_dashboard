@@ -1,0 +1,30 @@
+Repo:
+    - name
+    - url
+
+User:
+    - email
+
+Subscription:
+    - repo
+    - user
+    - notification options ?
+    - analysis options ?
+
+Commit:
+    - repo
+    - sha
+    - complexity
+
+Alert:
+    - commit
+    - file
+    - class
+    - method
+
+BugFix:
+    - commit
+    - file
+    - class
+    - method
+    - date fixed

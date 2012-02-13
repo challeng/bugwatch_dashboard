@@ -1,0 +1,7 @@
+require File.expand_path('../bugwatch/bug_fix', __FILE__)
+require File.expand_path('../bugwatch/fix_commit', __FILE__)
+require File.expand_path('../bugwatch/hot_spot', __FILE__)
+require File.expand_path('../bugwatch/fix_cache', __FILE__)
+require File.expand_path('../bugwatch/diff_parser', __FILE__)
+require File.expand_path('../bugwatch/method_parser', __FILE__)
+require File.expand_path('../bugwatch/git_fix_cache', __FILE__)
