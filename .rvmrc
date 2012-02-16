@@ -1,0 +1,7 @@
+USER_RVMRC='.rvmrc.local'
+
+if [ -f $USER_RVMRC ]; then
+  source $USER_RVMRC
+else
+  rvm 1.9.3@bugwatch_dashboard --create
+fi
