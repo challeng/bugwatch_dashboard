@@ -1,4 +1,5 @@
 require 'test_helper'
+require 'active_record_cache'
 
 class CommitTest < ActiveSupport::TestCase
 
@@ -10,18 +11,30 @@ class CommitTest < ActiveSupport::TestCase
     @commit ||= Commit.new(:sha => "XXX", :repo => repo)
   end
 
-  def test_creates_bug_fix_for_every_bug_fix_in_commit_in_analyze
-    grit_repo = stub
-    grit_commit = stub
-    fix_commit = Bugwatch::FixCommit.new(grit_commit)
-    bug_fix = Bugwatch::BugFix.new({:sha => "YYY", :file => "file.rb", :function => 'some_method', :klass => 'Class'})
-    bug_fix2 = Bugwatch::BugFix.new({:sha => "ZZZ", :file => "file2.rb", :function => 'random_method', :klass => 'Klass'})
-    fix_commit.stubs(:fixes).returns([bug_fix, bug_fix2])
-    grit_repo.stubs(:commit).with(commit.sha).returns(grit_commit)
-    repo.stubs(:repo).returns(grit_repo)
-    Bugwatch::FixCommit.stubs(:new).with(grit_commit).returns(fix_commit)
-    BugFix.expects(:create).with(:file => bug_fix.file, :function => bug_fix.function, :klass => bug_fix.klass, :commit => commit)
-    BugFix.expects(:create).with(:file => bug_fix2.file, :function => bug_fix2.function, :klass => bug_fix2.klass, :commit => commit)
+  def git_fix_cache
+    @git_fix_cache ||= Bugwatch::GitFixCache.new(repo.name, repo.url)
+  end
+
+  def setup
+    repo.stubs(:git_fix_cache).returns(git_fix_cache)
+    git_fix_cache.stubs(:add)
+    git_fix_cache.stubs(:write_bug_cache)
+  end
+
+  def test_sets_cache_strategy_to_active_record_cache
+    cache_strategy = ActiveRecordCache.new(commit)
+    ActiveRecordCache.expects(:new).with(commit).returns(cache_strategy)
+    commit.save
+    assert_equal cache_strategy, git_fix_cache.caching_strategy
+  end
+
+  def test_adds_commit_to_fix_cache_after_create
+    git_fix_cache.expects(:add).with(commit.sha)
+    commit.save
+  end
+
+  def test_writes_bug_cache_after_create
+    git_fix_cache.expects(:write_bug_cache)
     commit.save
   end
 

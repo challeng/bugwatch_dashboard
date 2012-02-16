@@ -1,5 +1,6 @@
 class Commit < ActiveRecord::Base
 
+  has_many :bug_fixes
   belongs_to :repo
 
   after_create :analyze
@@ -7,10 +8,10 @@ class Commit < ActiveRecord::Base
   private
 
   def analyze
-    commit = self.repo.repo.commit(self.sha)
-    Bugwatch::FixCommit.new(commit).fixes.each do |bug_fix|
-      BugFix.create(:commit => self, :file => bug_fix.file, :klass => bug_fix.klass, :function => bug_fix.function)
-    end
+    fix_cache = self.repo.git_fix_cache
+    fix_cache.caching_strategy = ActiveRecordCache.new(self)
+    fix_cache.add(self.sha)
+    fix_cache.write_bug_cache
   end
 
 end

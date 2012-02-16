@@ -21,14 +21,12 @@ Gem::Specification.new do |s|
   s.files = %w[
     bugwatch.gemspec
     lib/bugwatch.rb
-    lib/mailer.rb
-    lib/post_receive.rb
-    lib/bugwatch/server.rb
     lib/bugwatch/bug_fix.rb
     lib/bugwatch/diff_parser.rb
     lib/bugwatch/fix_cache.rb
     lib/bugwatch/fix_commit.rb
     lib/bugwatch/git_fix_cache.rb
+    lib/bugwatch/file_system_cache.rb
     lib/bugwatch/hot_spot.rb
     lib/bugwatch/method_parser.rb
   ]

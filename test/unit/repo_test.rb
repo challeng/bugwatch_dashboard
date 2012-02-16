@@ -18,4 +18,10 @@ class RepoTest < ActiveSupport::TestCase
     assert_equal grit_repository, sut.repo
   end
 
+  test "#git_fix_cache creates GitFixCache with name and url" do
+    git_fix_cache = stub
+    Bugwatch::GitFixCache.expects(:new).with(sut.name, sut.url).returns(git_fix_cache)
+    assert_equal git_fix_cache, sut.git_fix_cache
+  end
+
 end
