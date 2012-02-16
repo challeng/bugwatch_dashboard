@@ -17,14 +17,14 @@ class CommitAnalysisWorkerTests < Test::Unit::TestCase
   end
 
 
-  def test_finds_or_creates_repo
+  test ".perform finds or creates repo" do
     Repo.expects(:find_or_create_by_name_and_url).with(repo_name, repo_url).
         returns(repo)
     Commit.stubs(:new).returns(commit)
     sut.perform(repo_name, repo_url, commit_sha)
   end
 
-  def test_creates_commit_for_repo
+  test ".perform creates commit for repo" do
     Repo.expects(:find_or_create_by_name_and_url).with(repo_name, repo_url).
         returns(repo)
     Commit.expects(:new).with(:sha => commit_sha).returns(commit)

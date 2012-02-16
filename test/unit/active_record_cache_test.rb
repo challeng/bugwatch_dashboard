@@ -15,11 +15,11 @@ class ActiveRecordCacheTests < ActiveSupport::TestCase
     @bug_fix ||= BugFix.new(:file => "file.rb")
   end
 
-  def test_returns_false_if_no_bug_fixes_exist_in_cache_exists
+  test "#cache_exists? returns false if no bug fixes exist" do
     assert_false sut.cache_exists?
   end
 
-  def test_returns_true_if_bug_fixes_exist_on_commit_in_cache_exists
+  test "#cache_exists? returns true if bug fixes exist on commit" do
     commit.bug_fixes << bug_fix
     assert_true sut.cache_exists?
   end

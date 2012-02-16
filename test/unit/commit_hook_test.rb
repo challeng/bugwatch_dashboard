@@ -24,14 +24,14 @@ class CommitHookTests < Test::Unit::TestCase
     {:payload => JSON.dump(:repository => repository_params, :commits => commit_params)}
   end
 
-  def test_enqueues_analysis_worker_for_commit
+  test "POST /add enqueues analysis worker for commit" do
     commit_params = [{:id => 'XXX'}]
     Resque::Job.expects(:create).
         with(repo_params[:name].to_sym, CommitAnalysisWorker, repo_params[:name], repo_params[:url], 'XXX')
     post '/add', get_payload(commit_params)
   end
 
-  def test_enqueues_multiple_commits
+  test "POST /add enqueues multiple commits" do
     commit_params = [{:id => 'XXX'}, {:id => 'ZZZ'}]
     Resque::Job.expects(:create).
         with(repo_params[:name].to_sym, CommitAnalysisWorker, repo_params[:name], repo_params[:url], 'XXX')
