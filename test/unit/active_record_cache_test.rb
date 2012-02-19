@@ -15,6 +15,14 @@ class ActiveRecordCacheTests < ActiveSupport::TestCase
     @bug_fix ||= BugFix.new(:file => "file.rb")
   end
 
+  def repo
+    @repo ||= Repo.new
+  end
+
+  def setup
+    commit.repo = repo
+  end
+
   test "#cache_exists? returns false if no bug fixes exist" do
     assert_false sut.cache_exists?
   end
@@ -39,8 +47,8 @@ class ActiveRecordCacheTests < ActiveSupport::TestCase
 
   test "#store skips creating BugFix if it already exists" do
     bug_fix = Bugwatch::BugFix.new(:sha => "XXX", :file => "file.rb")
-    Commit.stubs(:all).returns([commit])
-    BugFix.expects(:create).with(:file => "file.rb", :function => nil, :klass => nil, :commit => commit).never
+    repo.commits << commit
+    BugFix.expects(:create).with(:commit => commit, :file => "file.rb", :klass => nil, :function => nil).never
     sut.store([bug_fix])
   end
 
