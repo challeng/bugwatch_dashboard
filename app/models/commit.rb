@@ -1,3 +1,5 @@
+require 'active_record_cache'
+
 class Commit < ActiveRecord::Base
 
   has_many :bug_fixes

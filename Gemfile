@@ -8,9 +8,8 @@ gem 'rails', '3.2.1'
 gem 'sqlite3'
 
 gem 'bugwatch', :path => "vendor/gems/bugwatch-0.1"
-gem 'sinatra', :require => 'sinatra/base'
+gem 'sinatra'
 gem 'resque'
-
 
 # Gems used only for assets and not required
 # in production environments by default.

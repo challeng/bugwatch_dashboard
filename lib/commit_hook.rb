@@ -1,7 +1,8 @@
 require "sinatra/base"
+require 'commit_analysis_worker'
 
 class CommitHook < Sinatra::Base
-  post '/add' do
+  post '/hook' do
     payload = JSON.parse(params['payload'])
     repository = payload['repository']
     commits = payload['commits']
