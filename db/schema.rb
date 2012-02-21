@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120216013049) do
+ActiveRecord::Schema.define(:version => 20120221194651) do
 
   create_table "bug_fixes", :force => true do |t|
     t.integer  "commit_id"
@@ -36,6 +36,23 @@ ActiveRecord::Schema.define(:version => 20120216013049) do
   create_table "repos", :force => true do |t|
     t.string   "name"
     t.string   "url"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  create_table "subscriptions", :force => true do |t|
+    t.integer  "user_id"
+    t.integer  "repo_id"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  add_index "subscriptions", ["repo_id"], :name => "index_subscriptions_on_repo_id"
+  add_index "subscriptions", ["user_id"], :name => "index_subscriptions_on_user_id"
+
+  create_table "users", :force => true do |t|
+    t.string   "email"
+    t.string   "name"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
   end

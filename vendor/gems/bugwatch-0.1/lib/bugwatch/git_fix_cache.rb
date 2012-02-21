@@ -6,6 +6,7 @@ module Bugwatch
     COMMIT_CHUNK_SIZE = 500
 
     attr_writer :caching_strategy
+    attr_accessor :on_commit
 
     def initialize(repo_name, repo_url)
       @repo_name = repo_name
@@ -22,8 +23,8 @@ module Bugwatch
 
     def add(commit_sha)
       unless bug_fixes_in_cache.map(&:sha).include?(commit_sha)
-        fix_commit = FixCommit.new(repo.commit(commit_sha))
-        cache.add(*fix_commit.fixes)
+        commit = repo.commit(commit_sha)
+        cache.add(*get_bug_fixes_from_commit(commit))
       end
     end
 
@@ -52,9 +53,14 @@ module Bugwatch
       end
     end
 
+    def get_bug_fixes_from_commit(commit)
+      on_commit.call(commit) if on_commit
+      Bugwatch::FixCommit.new(commit).fixes
+    end
+
     def mine_for_bug_fixes
       all_commits.flat_map do |commit|
-        Bugwatch::FixCommit.new(commit).fixes
+        get_bug_fixes_from_commit(commit)
       end
     end
 
