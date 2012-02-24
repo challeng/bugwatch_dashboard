@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120221194651) do
+ActiveRecord::Schema.define(:version => 20120224173824) do
 
   create_table "bug_fixes", :force => true do |t|
     t.integer  "commit_id"
@@ -53,8 +53,11 @@ ActiveRecord::Schema.define(:version => 20120221194651) do
   create_table "users", :force => true do |t|
     t.string   "email"
     t.string   "name"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at",     :null => false
+    t.datetime "updated_at",     :null => false
+    t.string   "identifier_url"
   end
+
+  add_index "users", ["identifier_url"], :name => "index_users_on_identifier_url", :unique => true
 
 end

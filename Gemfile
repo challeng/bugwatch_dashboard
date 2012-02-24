@@ -11,6 +11,9 @@ gem 'bugwatch', :path => "vendor/gems/bugwatch-0.1"
 gem 'sinatra'
 gem 'resque'
 
+gem 'ruby-openid'
+gem 'rack-openid'
+
 # Gems used only for assets and not required
 # in production environments by default.
 group :assets do
