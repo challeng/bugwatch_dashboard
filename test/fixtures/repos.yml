@@ -1,9 +1,9 @@
 ## Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
-#
-#one:
-#  name: MyString
-#  url: MyString
-#
-#two:
-#  name: MyString
-#  url: MyString
+
+test_repo:
+  name: Test Repo
+  url: path_to_repo
+
+other_repo:
+  name: Second Repo
+  url: path_to_second_repo

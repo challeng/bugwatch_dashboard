@@ -1,9 +1,6 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
 
-#one:
-#  email: MyString
-#  name: MyString
-#
-#two:
-#  email: MyString
-#  name: MyString
+test_user:
+  email: test@example.com
+  name: Test User
+  identifier_url: abc

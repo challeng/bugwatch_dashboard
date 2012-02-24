@@ -4,7 +4,8 @@ BugwatchDashboard::Application.routes.draw do
 
   match '/hook', :to => CommitHook
   resource :sessions
+  resources :repo
 
-  root :to => "application#index"
+  root :to => "repo#index"
 
 end
