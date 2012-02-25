@@ -36,6 +36,18 @@ module Bugwatch
       caching_strategy.store(bug_fixes_in_cache)
     end
 
+    def alerts(commit_sha)
+      commit = repo.commit(commit_sha)
+      commit_files = commit.stats.files.map(&:first)
+      hot_spots = cache.hot_spots.select {|hot_spot| commit_files.include?(hot_spot.file) }
+      diffs = commit.diffs.select {|diff| hot_spots.map(&:file).include?(diff.b_path) }
+      hot_spots.sort_by(&:file).zip(diffs.sort_by(&:b_path)).flat_map do |(hot_spot, diff)|
+        Bugwatch::DiffParser.parse_class_and_functions(diff).flat_map do |(klass, methods)|
+          hot_spot.bug_fixes.select {|bug_fix| bug_fix.klass == klass && methods.include?(bug_fix.function) }
+        end
+      end
+    end
+
     private
 
     def get_loaded_fix_cache
@@ -53,15 +65,15 @@ module Bugwatch
       end
     end
 
-    def get_bug_fixes_from_commit(commit)
-      on_commit.call(commit) if on_commit
-      Bugwatch::FixCommit.new(commit).fixes
-    end
-
     def mine_for_bug_fixes
       all_commits.flat_map do |commit|
         get_bug_fixes_from_commit(commit)
       end
+    end
+
+    def get_bug_fixes_from_commit(commit)
+      on_commit.call(commit) if on_commit
+      Bugwatch::FixCommit.new(commit).fixes
     end
 
     def all_commits

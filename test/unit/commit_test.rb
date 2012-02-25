@@ -31,6 +31,7 @@ class CommitTest < ActiveSupport::TestCase
     repo.stubs(:git_fix_cache).returns(git_fix_cache)
     grit_repo.stubs(:commit).with(sut.sha).returns(commit)
     git_fix_cache.stubs(:write_bug_cache)
+    git_fix_cache.stubs(:alerts).returns([])
     git_fix_cache.stubs(:repo).returns(grit_repo)
     git_fix_cache.stubs(:cache).returns(Bugwatch::FixCache.new(10))
   end
@@ -61,6 +62,15 @@ class CommitTest < ActiveSupport::TestCase
     user.id, repo.id = 5, 3
     User.stubs(:find_or_create_by_email).returns(user)
     Subscription.expects(:find_or_create_by_repo_id_and_user_id).with(repo.id, user.id)
+    sut.save
+  end
+
+  test "after_create creates alert for each alerted bug fix" do
+    bug_fix = Bugwatch::BugFix.new(:file => 'file.rb', :klass => 'Class', :function => 'function')
+    bug_fix2 = Bugwatch::BugFix.new(:file => 'file2.rb', :klass => 'Test', :function => 'function')
+    git_fix_cache.expects(:alerts).with(sut.sha).returns([bug_fix, bug_fix2])
+    Alert.expects(:create).with(:commit => sut, :file => 'file.rb', :klass => 'Class', :function => 'function')
+    Alert.expects(:create).with(:commit => sut, :file => 'file2.rb', :klass => 'Test', :function => 'function')
     sut.save
   end
 

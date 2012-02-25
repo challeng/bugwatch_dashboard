@@ -11,7 +11,18 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120224173824) do
+ActiveRecord::Schema.define(:version => 20120225024004) do
+
+  create_table "alerts", :force => true do |t|
+    t.integer  "commit_id"
+    t.string   "file"
+    t.string   "klass"
+    t.string   "function"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  add_index "alerts", ["commit_id"], :name => "index_alerts_on_commit_id"
 
   create_table "bug_fixes", :force => true do |t|
     t.integer  "commit_id"
