@@ -12,7 +12,8 @@ class ActiveRecordCacheTests < ActiveSupport::TestCase
   end
 
   def bug_fix
-    @bug_fix ||= BugFix.new(:file => "file.rb")
+    @bug_fix ||= BugFix.new(:file => "file.rb", :date_fixed => '2010-10-10', :klass => "Test",
+                            :function => "something", :commit => commit)
   end
 
   def repo
@@ -33,15 +34,17 @@ class ActiveRecordCacheTests < ActiveSupport::TestCase
   end
 
   test "#retrieve returns all bug fixes for commit" do
+    Bugwatch::BugFix.expects(:new).with(:date => bug_fix.date_fixed, :file => bug_fix.file, :klass => bug_fix.klass,
+                                        :function => bug_fix.function, :sha => "XXX").returns(:bugwatch_bugfix)
     commit.bug_fixes << bug_fix
-    assert_equal [bug_fix], sut.retrieve
+    assert_equal [:bugwatch_bugfix], sut.retrieve
   end
 
   test "#store creates BugFix for each bugwatch bug fix" do
-    bug_fix = Bugwatch::BugFix.new(:file => "file.rb")
-    bug_fix2 = Bugwatch::BugFix.new(:file => "file2.rb")
-    BugFix.expects(:create).with(:file => "file.rb", :function => nil, :klass => nil, :commit => commit)
-    BugFix.expects(:create).with(:file => "file2.rb", :function => nil, :klass => nil, :commit => commit)
+    bug_fix = Bugwatch::BugFix.new(:file => "file.rb", :date => '2010-10-10')
+    bug_fix2 = Bugwatch::BugFix.new(:file => "file2.rb", :date => '2010-11-20')
+    BugFix.expects(:create).with(:file => "file.rb", :function => nil, :klass => nil, :commit => commit, :date_fixed => bug_fix.date)
+    BugFix.expects(:create).with(:file => "file2.rb", :function => nil, :klass => nil, :commit => commit, :date_fixed => bug_fix2.date)
     sut.store([bug_fix, bug_fix2])
   end
 
