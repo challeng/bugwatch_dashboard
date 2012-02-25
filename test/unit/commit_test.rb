@@ -58,6 +58,12 @@ class CommitTest < ActiveSupport::TestCase
     sut.save
   end
 
+  test "after_create associates commit with user" do
+    User.stubs(:find_or_create_by_email).with(:email => user.email, :name => user.name).returns(user)
+    sut.expects(:update_attribute).with(:user, user)
+    sut.save
+  end
+
   test "after_create subscribes user to repository" do
     user.id, repo.id = 5, 3
     User.stubs(:find_or_create_by_email).returns(user)

@@ -4,6 +4,7 @@ class Commit < ActiveRecord::Base
 
   has_many :bug_fixes
   belongs_to :repo
+  belongs_to :user
 
   after_create :analyze
 
@@ -20,6 +21,7 @@ class Commit < ActiveRecord::Base
 
   def create_user_and_subscription(commit)
     user = User.find_or_create_by_email(:email => commit.committer.email, :name => commit.committer.name)
+    self.update_attribute(:user, user)
     Subscription.find_or_create_by_repo_id_and_user_id(self.repo.id, user.id)
   end
 
