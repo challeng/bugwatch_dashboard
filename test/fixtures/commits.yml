@@ -1,9 +1,7 @@
 ## Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
-#
-#one:
-#  sha: MyString
-#  repo:
-#
-#two:
-#  sha: MyString
-#  repo:
+
+test_commit:
+  sha: ZZZ
+  repo: test_repo
+  user: test_user
+

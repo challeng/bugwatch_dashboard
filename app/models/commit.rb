@@ -16,7 +16,8 @@ class Commit < ActiveRecord::Base
     fix_cache.on_commit = method(:create_user_and_subscription)
     fix_cache.add(self.sha)
     fix_cache.write_bug_cache
-    fix_cache.alerts(self.sha).each &method(:create_alert)
+    alerts = fix_cache.alerts(self.sha).map &method(:create_alert)
+    NotificationMailer.alert(alerts, :to => self.user.email).deliver unless alerts.empty?
   end
 
   def create_user_and_subscription(commit)

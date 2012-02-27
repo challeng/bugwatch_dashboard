@@ -8,7 +8,7 @@ class CommitTest < ActiveSupport::TestCase
   end
 
   def sut
-    @sut ||= Commit.new(:sha => "XXX", :repo => repo)
+    @sut ||= Commit.new(:sha => "XXX", :repo => repo, :user => user)
   end
 
   def git_fix_cache
@@ -71,12 +71,36 @@ class CommitTest < ActiveSupport::TestCase
     sut.save
   end
 
+  def bug_fix
+    @bug_fix ||= Bugwatch::BugFix.new(:file => 'file.rb', :klass => 'Class', :function => 'function')
+  end
+
+  def bug_fix2
+    @bug_fix2 ||= Bugwatch::BugFix.new(:file => 'file2.rb', :klass => 'Test', :function => 'function')
+  end
+
   test "after_create creates alert for each alerted bug fix" do
-    bug_fix = Bugwatch::BugFix.new(:file => 'file.rb', :klass => 'Class', :function => 'function')
-    bug_fix2 = Bugwatch::BugFix.new(:file => 'file2.rb', :klass => 'Test', :function => 'function')
+    alert1, alert2 = Alert.new, Alert.new
     git_fix_cache.expects(:alerts).with(sut.sha).returns([bug_fix, bug_fix2])
-    Alert.expects(:create).with(:commit => sut, :file => 'file.rb', :klass => 'Class', :function => 'function')
-    Alert.expects(:create).with(:commit => sut, :file => 'file2.rb', :klass => 'Test', :function => 'function')
+    Alert.expects(:create).with(:commit => sut, :file => 'file.rb', :klass => 'Class', :function => 'function').returns(alert1)
+    Alert.expects(:create).with(:commit => sut, :file => 'file2.rb', :klass => 'Test', :function => 'function').returns(alert2)
+    sut.save
+  end
+
+  test "after_create delivers alerts" do
+    alert1, alert2 = Alert.new, Alert.new
+    mailer = stub
+    git_fix_cache.expects(:alerts).with(sut.sha).returns([bug_fix, bug_fix2])
+    Alert.stubs(:create).with(:commit => sut, :file => 'file.rb', :klass => 'Class', :function => 'function').returns(alert1)
+    Alert.stubs(:create).with(:commit => sut, :file => 'file2.rb', :klass => 'Test', :function => 'function').returns(alert2)
+    NotificationMailer.expects(:alert).with([alert1, alert2], :to => sut.user.email).returns(mailer)
+    mailer.expects(:deliver)
+    sut.save
+  end
+
+  test "after_create does not deliver if no alerts" do
+    git_fix_cache.expects(:alerts).with(sut.sha).returns([])
+    NotificationMailer.expects(:alert).never
     sut.save
   end
 
