@@ -1,9 +1,5 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
 
-#one:
-#  user:
-#  repo:
-#
-#two:
-#  user:
-#  repo:
+test_subscription:
+  user: test_user
+  repo: test_repo

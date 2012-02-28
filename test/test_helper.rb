@@ -12,6 +12,6 @@ class ActiveSupport::TestCase
   # Add more helper methods to be used by all tests here...
 end
 
-def logged_in!
-  session[:user_id] = users(:test_user).id
+def logged_in!(user=:test_user)
+  session[:user_id] = users(user).id
 end

@@ -1,1 +1,7 @@
 <%= @repo.name %>
+
+<%= form_for @subscription do |f| %>
+    <%= f.label :notify_on_analysis %>
+    <%= f.check_box :notify_on_analysis %>
+    <%= f.submit %>
+<% end %>

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120225191841) do
+ActiveRecord::Schema.define(:version => 20120228162903) do
 
   create_table "alerts", :force => true do |t|
     t.integer  "commit_id"
@@ -56,8 +56,9 @@ ActiveRecord::Schema.define(:version => 20120225191841) do
   create_table "subscriptions", :force => true do |t|
     t.integer  "user_id"
     t.integer  "repo_id"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at",                            :null => false
+    t.datetime "updated_at",                            :null => false
+    t.boolean  "notify_on_analysis", :default => false
   end
 
   add_index "subscriptions", ["repo_id"], :name => "index_subscriptions_on_repo_id"

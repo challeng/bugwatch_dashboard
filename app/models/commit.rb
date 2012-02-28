@@ -16,8 +16,7 @@ class Commit < ActiveRecord::Base
     fix_cache.on_commit = method(:create_user_and_subscription)
     fix_cache.add(self.sha)
     fix_cache.write_bug_cache
-    alerts = fix_cache.alerts(self.sha).map &method(:create_alert)
-    NotificationMailer.alert(alerts, :to => self.user.email).deliver unless alerts.empty?
+    deliver_alerts(fix_cache)
   end
 
   def create_user_and_subscription(commit)
@@ -28,6 +27,16 @@ class Commit < ActiveRecord::Base
 
   def create_alert(bug_fix)
     Alert.create(:commit => self, :file => bug_fix.file, :klass => bug_fix.klass, :function => bug_fix.function)
+  end
+
+  def deliver_alerts(fix_cache)
+    alerts = fix_cache.alerts(self.sha).map &method(:create_alert)
+    NotificationMailer.alert(alerts, :to => self.user.email).deliver if send_alerts?(alerts)
+  end
+
+  def send_alerts?(alerts)
+    user_subscription = Subscription.find_by_repo_id_and_user_id(self.repo.id, self.user.id)
+    !alerts.empty? && user_subscription.notify_on_analysis
   end
 
 end

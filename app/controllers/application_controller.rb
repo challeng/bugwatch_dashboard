@@ -5,7 +5,4 @@ class ApplicationController < ActionController::Base
 
   before_filter :enforce_authentication
 
-  def index
-    render :text => "TODO"
-  end
 end

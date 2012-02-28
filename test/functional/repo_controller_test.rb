@@ -2,10 +2,6 @@ require 'test_helper'
 
 class RepoControllerTest < ActionController::TestCase
 
-  def setup
-    logged_in!
-  end
-
   def user
     users(:test_user)
   end
@@ -14,14 +10,20 @@ class RepoControllerTest < ActionController::TestCase
     repos(:test_repo)
   end
 
+  def subscription
+    subscriptions(:test_subscription)
+  end
+
+  def setup
+    logged_in!
+  end
+
   test "GET#index retrieves all repos for user" do
-    user.subscriptions << Subscription.new(:repo => repo)
     get :index
     assert_equal [repo], assigns(:repos)
   end
 
   test "GET#show retrieves repo by id" do
-    user.subscriptions << Subscription.new(:repo => repo)
     get :show, :id => repo.id
     assert_equal repo, assigns(:repo)
   end
@@ -33,9 +35,15 @@ class RepoControllerTest < ActionController::TestCase
   end
 
   test "GET#show redirects to index if user has not subscribed to repo" do
+    subscription.destroy
     get :show, :id => repo.id
     assert_redirected_to repo_url
     assert_equal "Repo with ID #{repo.id} could not be found", flash[:alert]
+  end
+
+  test "GET#show assigns subscription @subscription" do
+    get :show, :id => repo.id
+    assert_equal subscription, assigns[:subscription]
   end
 
 end

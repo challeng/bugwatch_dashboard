@@ -3,6 +3,8 @@ require 'active_record_cache'
 
 class CommitTest < ActiveSupport::TestCase
 
+  attr_reader :subscription
+
   def repo
     @repo ||= Repo.new(:name => "test_repo", :url => "path/to/url").tap {|r| r.stubs(:clone_repo)}
   end
@@ -34,6 +36,7 @@ class CommitTest < ActiveSupport::TestCase
     git_fix_cache.stubs(:alerts).returns([])
     git_fix_cache.stubs(:repo).returns(grit_repo)
     git_fix_cache.stubs(:cache).returns(Bugwatch::FixCache.new(10))
+    @subscription = Subscription.create!(:repo => repo, :user => user, :notify_on_analysis => true)
   end
 
   test "after_create sets cache strategy to active record cache" do
@@ -100,6 +103,13 @@ class CommitTest < ActiveSupport::TestCase
 
   test "after_create does not deliver if no alerts" do
     git_fix_cache.expects(:alerts).with(sut.sha).returns([])
+    NotificationMailer.expects(:alert).never
+    sut.save
+  end
+
+  test "after_create does not deliver if user notification disabled" do
+    subscription.update_attribute(:notify_on_analysis, false)
+    git_fix_cache.expects(:alerts).with(sut.sha).returns([bug_fix])
     NotificationMailer.expects(:alert).never
     sut.save
   end
