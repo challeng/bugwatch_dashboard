@@ -3,6 +3,8 @@ require 'grit'
 class Repo < ActiveRecord::Base
 
   has_many :commits
+  has_many :alerts, :through => :commits
+  has_many :bug_fixes, :through => :commits
 
   after_create :clone_repo
 
@@ -14,10 +16,6 @@ class Repo < ActiveRecord::Base
 
   def git_fix_cache
     @git_fix_cache ||= Bugwatch::GitFixCache.new(self.name, self.url)
-  end
-
-  def bug_fixes
-    commits.includes(:bug_fixes).all.flat_map(&:bug_fixes)
   end
 
   private

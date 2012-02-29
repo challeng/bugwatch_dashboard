@@ -10,6 +10,8 @@ BugwatchDashboard::Application.routes.draw do
     member { get :alerts }
   end
 
+  resources :alerts
+
   root :to => "repo#index"
 
 end

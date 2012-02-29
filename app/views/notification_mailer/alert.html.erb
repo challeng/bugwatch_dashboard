@@ -1,0 +1,19 @@
+<html>
+<body>
+
+Hello, <%= @user.name %>
+
+Bugwatch has generated the following alerts:
+
+<% @presenter.files.each do |file, klasses| %>
+  <%= file %>
+  <% klasses.each do |klass, alerts| %>
+    &nbsp;<%= klass.klass %>
+    <% alerts.each do |alert| %>
+        &nbsp;&nbsp;<%= alert.function %><%= link_to "View alert", alert_path(alert) %>
+    <% end %>
+  <% end %>
+<% end %>
+
+</body>
+</html>

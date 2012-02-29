@@ -11,8 +11,8 @@ class RepoController < ApplicationController
   end
 
   def alerts
-    @alerts = @repo.commits.includes(:alerts).all.flat_map(&:alerts)
-    @user_alerts = @repo.commits.includes(:alerts).where("user_id = ?", current_user).flat_map(&:alerts)
+    @alerts = @repo.alerts.all
+    @user_alerts = @repo.alerts.where("commits.user_id" => current_user).all
   end
 
   private
