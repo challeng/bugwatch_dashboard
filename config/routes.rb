@@ -6,12 +6,11 @@ BugwatchDashboard::Application.routes.draw do
 
   match '/hook', :to => CommitHook
   resource :sessions
-  resources :repo do
-    member { get :alerts }
+  resources :repos do
+    resources :alerts
   end
 
-  resources :alerts
 
-  root :to => "repo#index"
+  root :to => "repos#index"
 
 end

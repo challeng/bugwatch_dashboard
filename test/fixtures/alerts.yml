@@ -1,13 +1,7 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
 
-#one:
-#  commit:
-#  file: MyString
-#  klass: MyString
-#  function: MyString
-#
-#two:
-#  commit:
-#  file: MyString
-#  klass: MyString
-#  function: MyString
+test_alert:
+  commit: test_commit
+  file: file.rb
+  klass: Test
+  function: method_name
