@@ -1,7 +1,7 @@
 require 'test_helper'
 require 'rack/openid'
 
-class SessionsControllerTest < ActionController::TestCase
+class SessionControllerTest < ActionController::TestCase
 
   attr_reader :email, :first_name, :last_name, :identifier_url
 
@@ -58,13 +58,13 @@ class SessionsControllerTest < ActionController::TestCase
   test "POST#create redirects to new session if not through openid" do
     request.env[Rack::OpenID::RESPONSE] = nil
     post :create
-    assert_redirected_to new_sessions_path
+    assert_redirected_to new_session_path
   end
 
   test "GET#new sends authenticate header" do
     required = %w(http://axschema.org/contact/email http://axschema.org/namePerson/first http://axschema.org/namePerson/last)
     authenticate_params = {:identifier => "https://www.google.com/accounts/o8/id", :required => required,
-                            :return_to => sessions_url, :method => 'POST'}
+                            :return_to => session_url, :method => 'POST'}
     expected = Rack::OpenID.build_header(authenticate_params)
     get :new
     assert_equal expected, response.headers['WWW-Authenticate']
