@@ -4,11 +4,11 @@ require 'active_record_cache'
 class ActiveRecordCacheTests < ActiveSupport::TestCase
 
   def sut
-    @sut ||= ActiveRecordCache.new(commit)
+    @sut ||= ActiveRecordCache.new(repo)
   end
 
   def commit
-    @commit ||= Commit.new(:sha => "XXX").tap {|c| c.stubs(:analyze)}
+    commits(:test_commit)
   end
 
   def bug_fix
@@ -17,11 +17,7 @@ class ActiveRecordCacheTests < ActiveSupport::TestCase
   end
 
   def repo
-    @repo ||= Repo.new
-  end
-
-  def setup
-    commit.repo = repo
+    repos(:test_repo)
   end
 
   test "#cache_exists? returns false if no bug fixes exist" do
@@ -35,23 +31,24 @@ class ActiveRecordCacheTests < ActiveSupport::TestCase
 
   test "#retrieve returns all bug fixes for commit" do
     Bugwatch::BugFix.expects(:new).with(:date => bug_fix.date_fixed, :file => bug_fix.file, :klass => bug_fix.klass,
-                                        :function => bug_fix.function, :sha => "XXX").returns(:bugwatch_bugfix)
+                                        :function => bug_fix.function, :sha => commit.sha).returns(:bugwatch_bugfix)
     commit.bug_fixes << bug_fix
     assert_equal [:bugwatch_bugfix], sut.retrieve
   end
 
   test "#store creates BugFix for each bugwatch bug fix" do
-    bug_fix = Bugwatch::BugFix.new(:file => "file.rb", :date => '2010-10-10')
-    bug_fix2 = Bugwatch::BugFix.new(:file => "file2.rb", :date => '2010-11-20')
+    bug_fix = Bugwatch::BugFix.new(:file => "file.rb", :date => '2010-10-10', :sha => commit.sha)
+    bug_fix2 = Bugwatch::BugFix.new(:file => "file2.rb", :date => '2010-11-20', :sha => commit.sha)
     BugFix.expects(:create).with(:file => "file.rb", :function => nil, :klass => nil, :commit => commit, :date_fixed => bug_fix.date)
     BugFix.expects(:create).with(:file => "file2.rb", :function => nil, :klass => nil, :commit => commit, :date_fixed => bug_fix2.date)
     sut.store([bug_fix, bug_fix2])
   end
 
   test "#store skips creating BugFix if it already exists" do
-    bug_fix = Bugwatch::BugFix.new(:sha => "XXX", :file => "file.rb")
-    repo.commits << commit
-    BugFix.expects(:create).with(:commit => commit, :file => "file.rb", :klass => nil, :function => nil).never
+    bug_fix_params = {:commit => commit, :file => "file.rb", :klass => nil, :function => nil}
+    BugFix.create!(bug_fix_params)
+    bug_fix = Bugwatch::BugFix.new(bug_fix_params.merge(:sha => commit.sha))
+    BugFix.expects(:create).with(bug_fix_params).never
     sut.store([bug_fix])
   end
 
