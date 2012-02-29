@@ -1,0 +1,31 @@
+<h1>Alerts for <%= @repo.name %></h1>
+
+<h3>Your alerts</h3>
+<ol>
+<% @user_alerts.each do |alert| %>
+  <li>
+      <ul>
+        <li>Date: <%= alert.created_at %></li>
+        <li>File: <%= alert.file %></li>
+        <li>Class: <%= alert.klass %></li>
+        <li>Method: <%= alert.function %></li>
+        <li>Commit: <%= alert.commit.sha %></li>
+      </ul>
+  </li>
+<% end %>
+</ol>
+
+<h3>All alerts</h3>
+<ol>
+<% @alerts.each do |alert| %>
+  <li>
+      <ul>
+        <li>Date: <%= alert.created_at %></li>
+        <li>File: <%= alert.file %></li>
+        <li>Class: <%= alert.klass %></li>
+        <li>Method: <%= alert.function %></li>
+        <li>Commit: <%= alert.commit.sha %></li>
+      </ul>
+  </li>
+<% end %>
+</ol>
