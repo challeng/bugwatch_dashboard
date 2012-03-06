@@ -5,7 +5,7 @@ BugwatchDashboard::Application.routes.draw do
   resources :subscription
 
   match '/hook', :to => CommitHook
-  resource :session
+  resource :sessions
   resources :repos do
     resources :alerts
   end

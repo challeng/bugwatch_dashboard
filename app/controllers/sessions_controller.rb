@@ -1,4 +1,4 @@
-class SessionController < ApplicationController
+class SessionsController < ApplicationController
 
   ATTRIBUTE_EXCHANGE = {
       :email => "http://axschema.org/contact/email",
@@ -14,7 +14,7 @@ class SessionController < ApplicationController
         :required => [ATTRIBUTE_EXCHANGE[:email],
                       ATTRIBUTE_EXCHANGE[:first_name],
                       ATTRIBUTE_EXCHANGE[:last_name]],
-        :return_to => session_url,
+        :return_to => sessions_url,
         :method => 'POST')
     head 401
   end
@@ -31,7 +31,7 @@ class SessionController < ApplicationController
         render :text => 'problem'
       end
     else
-      redirect_to new_session_path
+      redirect_to new_sessions_path
     end
   end
 

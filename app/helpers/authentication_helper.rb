@@ -10,7 +10,7 @@ module AuthenticationHelper
   def enforce_authentication
     unless signed_in?
       session[:redirect_to] = request.fullpath
-      redirect_to(new_session_path)
+      redirect_to(new_sessions_path)
     end
   end
 end
