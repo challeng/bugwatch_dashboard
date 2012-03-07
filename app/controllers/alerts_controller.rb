@@ -9,6 +9,8 @@ class AlertsController < ApplicationController
 
   def show
     @alert = @repo.alerts.find(params[:id])
+    @related_bug_fixes = @repo.bug_fixes.where("file = ? AND klass = ? AND function = ?",
+                                      @alert.file, @alert.klass, @alert.function)
   rescue ActiveRecord::RecordNotFound
     redirect_to repo_alerts_path(@repo), :alert => "Alert with ID #{params[:id]} could not be found"
   end

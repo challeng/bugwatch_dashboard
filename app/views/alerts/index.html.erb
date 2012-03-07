@@ -3,6 +3,7 @@
 <h3>Your alerts</h3>
 <ol>
 <% @user_alerts.each do |alert| %>
+  <%= link_to repo_alert_path(@repo, alert) do %>
   <li>
       <ul>
         <li>Date: <%= alert.created_at %></li>
@@ -12,12 +13,14 @@
         <li>Commit: <%= alert.commit.sha %></li>
       </ul>
   </li>
+  <% end %>
 <% end %>
 </ol>
 
 <h3>All alerts</h3>
 <ol>
 <% @alerts.each do |alert| %>
+  <%= link_to repo_alert_path(@repo, alert) do %>
   <li>
       <ul>
         <li>Date: <%= alert.created_at %></li>
@@ -27,5 +30,6 @@
         <li>Commit: <%= alert.commit.sha %></li>
       </ul>
   </li>
+  <% end %>
 <% end %>
 </ol>

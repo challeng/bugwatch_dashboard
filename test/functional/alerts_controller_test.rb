@@ -37,6 +37,13 @@ class AlertsControllerTest < ActionController::TestCase
     assert_equal "Repo with ID #{repo.id} could not be found", flash[:alert]
   end
 
+  test "GET#show gets related bug fixes to alert" do
+    bug_fix = BugFix.create(:file => alert.file, :klass => alert.klass, :function => alert.function, :commit => commits(:test_commit))
+    bug_fix2 = BugFix.create(:file => alert.file, :klass => alert.klass, :function => alert.function, :commit => commits(:test_commit))
+    get :show, :repo_id => repo.id, :id => alert.id
+    assert_equal [bug_fix, bug_fix2], assigns(:related_bug_fixes)
+  end
+
   test "GET#index retrieves alerts for repo" do
     commit = commits(:test_commit)
     alert1 = Alert.create!(:commit => commit)

@@ -1,0 +1,20 @@
+<h1>Alert for <%= @repo.name %></h1>
+<ul>
+  <li>File: <%= @alert.file %></li>
+  <li>Class: <%= @alert.klass %></li>
+  <li>Method: <%= @alert.function %></li>
+  <li>Commit: <%= @alert.commit.sha %></li>
+</ul>
+
+<h2>Related Bug Fixes</h2>
+<ol>
+<% @related_bug_fixes.each do |bug_fix| %>
+  <li>
+  <ul>
+      <li>File: <%= bug_fix.file %></li>
+      <li>Class: <%= bug_fix.klass %></li>
+      <li>Method: <%= bug_fix.function %></li>
+  </ul>
+  </li>
+<% end %>
+</ol>
