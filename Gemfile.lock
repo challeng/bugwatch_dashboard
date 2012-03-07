@@ -13,6 +13,7 @@ PATH
   specs:
     commit_fu (0.1)
       grit
+      roodi
       ruby_parser (~> 2.0)
       rugged
       sexp_processor (~> 3.0)
@@ -118,6 +119,8 @@ GEM
       redis-namespace (~> 1.0.2)
       sinatra (>= 0.9.2)
       vegas (~> 0.1.2)
+    roodi (2.1.0)
+      ruby_parser
     ruby-openid (2.1.8)
     ruby-prof (0.10.8)
     ruby_parser (2.3.1)
