@@ -8,6 +8,15 @@ PATH
       sexp_processor (~> 3.0)
       sinatra
 
+PATH
+  remote: vendor/gems/commit_fu-0.1
+  specs:
+    commit_fu (0.1)
+      grit
+      ruby_parser (~> 2.0)
+      rugged
+      sexp_processor (~> 3.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -113,6 +122,7 @@ GEM
     ruby-prof (0.10.8)
     ruby_parser (2.3.1)
       sexp_processor (~> 3.0)
+    rugged (0.16.0)
     sass (3.1.15)
     sass-rails (3.2.4)
       railties (~> 3.2.0)
@@ -147,6 +157,7 @@ PLATFORMS
 DEPENDENCIES
   bugwatch!
   coffee-rails (~> 3.2.1)
+  commit_fu!
   jquery-rails
   mocha
   rack-openid

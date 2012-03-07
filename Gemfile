@@ -8,6 +8,7 @@ gem 'rails', '3.2.1'
 gem 'sqlite3'
 
 gem 'bugwatch', :path => "vendor/gems/bugwatch-0.1"
+gem 'commit_fu', :path => "vendor/gems/commit_fu-0.1"
 gem 'sinatra'
 gem 'resque'
 
