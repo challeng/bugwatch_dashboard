@@ -17,6 +17,7 @@ class CommitAnalysisWorkerTest < ActiveSupport::TestCase
     git_fix_cache.stubs(:alerts).returns([])
     git_fix_cache.stubs(:repo).returns(grit_repo)
     git_fix_cache.stubs(:cache).returns(Bugwatch::FixCache.new(10))
+    grit_commit.stubs(:extend).with(CommitFu::FlogCommit)
   end
 
   def repo
@@ -36,7 +37,8 @@ class CommitAnalysisWorkerTest < ActiveSupport::TestCase
   end
 
   def grit_commit
-    @grit_commit ||= stub(:committer => stub(:name => user.name, :email => user.email), :short_message => "test", :sha => commit.sha)
+    @grit_commit ||= stub(:committer => stub(:name => user.name, :email => user.email), :short_message => "test",
+                          :sha => commit.sha, :average => 5.0)
   end
 
   def subscription
@@ -71,13 +73,20 @@ class CommitAnalysisWorkerTest < ActiveSupport::TestCase
 
   test "#perform associates commit with user" do
     User.stubs(:find_or_create_by_email).with(:email => user.email, :name => user.name).returns(user)
-    Commit.expects(:find_or_create_by_sha_and_repo_id).with(commit.sha, repo.id, :user => user).returns(commit)
+    Commit.expects(:find_or_create_by_sha_and_repo_id).with(commit.sha, repo.id, has_entry(:user => user)).returns(commit)
     sut.perform(repo_name, repo_url, commit.sha)
   end
 
   test "#perform subscribes user to repository" do
     User.stubs(:find_or_create_by_email).returns(user)
     Subscription.expects(:find_or_create_by_repo_id_and_user_id).with(repo.id, user.id)
+    sut.perform(repo_name, repo_url, commit.sha)
+  end
+
+  test "#perform creates commit with complexity score" do
+    grit_commit.expects(:extend).with(CommitFu::FlogCommit)
+    grit_commit.expects(:average).returns(5.0)
+    Commit.expects(:find_or_create_by_sha_and_repo_id).with(commit.sha, repo.id, has_entry(:complexity => grit_commit.average)).returns(commit)
     sut.perform(repo_name, repo_url, commit.sha)
   end
 
