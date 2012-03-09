@@ -26,7 +26,7 @@ set :keep_releases, 5
 default_run_options[:pty] = true
 ssh_options[:paranoid]    = false
 
-set :shared_config, %w{config/database.yml}
+set :shared_config, %w{config/database.yml config/mailer.yml}
 
 namespace :shared_config do
   desc "Uploads local configuration files"
@@ -100,7 +100,12 @@ namespace :deploy do
   task :restart, :roles => :app, :except => { :no_release => true } do
     run "#{try_sudo} touch #{File.join(current_path, 'tmp/restart.txt')}"
   end
+  #task :symlink_shared do
+  #  run "ln -s #{shared_path}/database.yml #{release_path}/config/"
+  #end
 end
+
+#before "deploy:restart", "deploy:symlink_shared"
 
 before "deploy:update_code" do
 end

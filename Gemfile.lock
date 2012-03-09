@@ -183,6 +183,7 @@ DEPENDENCIES
   mocha
   rack-openid
   rails (= 3.2.1)
+  rake
   resque
   ruby-openid
   ruby-prof
