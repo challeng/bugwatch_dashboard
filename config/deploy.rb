@@ -16,6 +16,7 @@ set :deploy_to, "/var/groupon/fixcache"
 
 set :bundle_flags, "--system" # disable the --deployment flag
 set :bundle_dir  , nil         # use the system set of gems
+set :bundle_cmd, "LANG='en_US.UTF-8' bundle"
 
 set :user    , "fixcache_deploy"
 set :use_sudo, false
