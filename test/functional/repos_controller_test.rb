@@ -16,6 +16,7 @@ class ReposControllerTest < ActionController::TestCase
 
   def setup
     logged_in!
+    Repo.any_instance.stubs(:git_fix_cache).returns(stub(:cache => Bugwatch::FixCache.new(10)))
   end
 
   test "GET#index retrieves all repos for user" do

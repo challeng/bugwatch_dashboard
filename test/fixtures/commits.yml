@@ -4,4 +4,6 @@ test_commit:
   sha: ZZZ
   repo: test_repo
   user: test_user
+  complexity: 5
+
 

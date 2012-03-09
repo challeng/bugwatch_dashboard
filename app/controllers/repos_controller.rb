@@ -9,6 +9,7 @@ class ReposController < ApplicationController
   def show
     @subscription = current_user.subscriptions.find_by_user_id(current_user.id)
     @commits = @repo.commits.order("id DESC").limit(20)
+    @hot_spots = @repo.git_fix_cache.cache.hot_spots
   end
 
   private
