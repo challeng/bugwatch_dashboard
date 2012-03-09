@@ -1,0 +1,65 @@
+<script type="text/javascript">
+var chart;
+$(document).ready(function() {
+    chart = new Highcharts.Chart({
+        chart: {
+            renderTo: 'container',
+            defaultSeriesType: 'line',
+            marginRight: 130,
+            marginBottom: 25
+        },
+        title: {
+            text: 'Complexity Over Time',
+            x: -20
+        },
+        yAxis: {
+            title: {
+                text: 'Accumulated Score'
+            },
+            plotLines: [{
+                value: 0,
+                width: 1,
+                color: '#808080'
+            }]
+        },
+        xAxis: {
+            categories: <%= commits.map(&:sha).to_s.html_safe %>,
+            labels: {
+                enabled: false
+            }
+        },
+        tooltip: {
+            formatter: function() {
+                    return '<b>'+ this.x +'</b><br />'
+                            + this.series.name + '<br />Complexity: ' + this.y;
+            }
+        },
+        plotOptions: {
+            series: {
+                cursor: 'pointer',
+                point: {
+                    events: {
+                        click: function() {
+                            window.open('/commit/' + this.category);
+                        }
+                    }
+                },
+                marker: {
+                    lineWidth: 1
+                }
+            }
+        },
+        legend: {
+            layout: 'vertical',
+            align: 'top',
+            verticalAlign: 'top',
+            x: -10,
+            y: -10,
+            borderWidth: 0
+        },
+        series: <%= aggregate_complexity_for_graph(repo.name, commits.map(&:complexity)).to_s.html_safe %>
+    });
+});
+
+</script>
+<div id="container"></div>

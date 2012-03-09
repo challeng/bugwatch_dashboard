@@ -1,0 +1,46 @@
+<script type="text/javascript">
+var chart;
+$(document).ready(function() {
+    chart = new Highcharts.Chart({
+        chart: {
+            renderTo: 'fix_cache_container',
+            defaultSeriesType: 'bar',
+        },
+        title: {
+            text: 'Fix Cache',
+            x: -20 //center
+        },
+        yAxis: {
+            title: {
+                text: 'Score'
+            },
+            plotLines: [{
+                value: 0,
+                width: 1,
+                color: '#808080'
+            }]
+        },
+        xAxis: {
+            categories: []
+        },
+        plotOptions: {
+            bar: {
+                dataLabels: {
+                    enabled: true
+                }
+            }
+        },
+        legend: {
+            layout: 'vertical',
+            align: 'top',
+            verticalAlign: 'top',
+            x: -10,
+            y: -10,
+            borderWidth: 0
+        },
+            series: <%= fix_cache_graph_data(hot_spots).to_s.html_safe %>
+    });
+});
+
+</script>
+<div id="fix_cache_container" style="height: 100%;"></div>
