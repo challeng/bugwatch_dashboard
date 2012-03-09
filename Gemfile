@@ -16,6 +16,7 @@ gem 'ruby-openid'
 gem 'rack-openid'
 
 gem 'json', '1.6.1'
+gem 'rake'
 
 
 # Gems used only for assets and not required

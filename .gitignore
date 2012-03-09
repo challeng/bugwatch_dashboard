@@ -18,3 +18,4 @@
 repos
 
 config/mailer.yml
+.DS_Store
