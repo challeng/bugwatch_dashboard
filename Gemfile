@@ -15,6 +15,9 @@ gem 'resque'
 gem 'ruby-openid'
 gem 'rack-openid'
 
+gem 'json', '1.6.1'
+
+
 # Gems used only for assets and not required
 # in production environments by default.
 group :assets do
@@ -33,6 +36,14 @@ group :development, :test do
   gem 'test-unit'
   gem 'mocha'
   gem 'ruby-prof'
+end
+
+group :development do
+  gem 'capistrano'
+end
+
+group :production do
+  gem 'god'
 end
 
 # To use ActiveModel has_secure_password
