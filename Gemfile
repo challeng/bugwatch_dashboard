@@ -43,7 +43,7 @@ group :development do
 end
 
 group :production do
-  gem 'god'
+  gem 'god', '0.11.0'
 end
 
 # To use ActiveModel has_secure_password
