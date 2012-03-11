@@ -1,14 +1,67 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>BugwatchDashboard</title>
+  <title>Bugwatch</title>
   <%= stylesheet_link_tag    "application", :media => "all" %>
   <%= javascript_include_tag "application" %>
   <%= csrf_meta_tags %>
 </head>
+
 <body>
 
-<%= yield %>
+    <div class="navbar navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container-fluid">
+          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </a>
+          <a class="brand" href="#">Bugwatch</a>
+          <div class="nav-collapse">
+            <ul class="nav">
+              <li class="active"><a href="#">Home</a></li>
+              <li><a href="#about">About</a></li>
+              <li><a href="#contact">Contact</a></li>
+            </ul>
+            <p class="navbar-text pull-right">Logged in as <%= current_user.email %></p>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
 
-</body>
+    <div class="container-fluid">
+      <div class="row-fluid">
+        <div class="span3">
+          <div class="well sidebar-nav">
+            <ul class="nav nav-list">
+              <li class="nav-header">Repos</li>
+              <% current_user.repos.each do |repo| %>
+              <%= content_tag(:li, link_to(repo.name, repo_path(repo)), :class => nav_repo_class(repo))  %>
+              <% end %>
+              <% if @repo %>
+              <li class="nav-header">Repo pages</li>
+              <%= content_tag(:li, link_to("Alerts", repo_alerts_path(@repo)), :class => nav_action_class(:controller => :alerts, :action => :index)) %>
+              <% end %>
+            </ul>
+          </div><!--/.well -->
+        </div><!--/span-->
+        <div class="span9">
+
+            <div class="row-fluid">
+              <div class="span12">
+                <%= yield %>
+               </div>
+
+            </div>
+        </div>
+      </div>
+      <hr>
+
+      <footer>
+        <p>&copy; Company 2012</p>
+      </footer>
+
+    </div><!--/.fluid-container-->
+  </body>
 </html>

@@ -1,6 +1,7 @@
 <h1>Alerts for <%= @repo.name %></h1>
 
-<h3>Your alerts</h3>
+<div class="well">
+<h2>Your alerts</h2>
 <ol>
 <% @user_alerts.each do |alert| %>
   <%= link_to repo_alert_path(@repo, alert) do %>
@@ -16,8 +17,10 @@
   <% end %>
 <% end %>
 </ol>
+</div>
 
-<h3>All alerts</h3>
+<div class="well">
+<h2>All alerts</h2>
 <ol>
 <% @alerts.each do |alert| %>
   <%= link_to repo_alert_path(@repo, alert) do %>
@@ -33,3 +36,4 @@
   <% end %>
 <% end %>
 </ol>
+</div>

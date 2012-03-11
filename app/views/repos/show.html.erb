@@ -1,12 +1,16 @@
-<%= @repo.name %>
-
-<%= form_for @subscription do |f| %>
-    <%= f.label :notify_on_analysis %>
-    <%= f.check_box :notify_on_analysis %>
+<div id="title"><h1><%= @repo.name %></h1></div>
+<br />
+<div class="well subscription">
+<h2>Manage subscription</h2>
+<%= simple_form_for @subscription do |f| %>
+    <%= f.input :notify_on_analysis %>
     <%= f.submit %>
 <% end %>
+</div>
 
+<div class="well"><%= link_to "View Alerts", repo_alerts_path(@repo) %></div>
+
+<div class="well">
 <%= render "complexity_chart", :commits => @commits, :repo => @repo %>
 <%= render "fix_cache_chart", :hot_spots => @hot_spots %>
-
-<%= link_to "View Alerts", repo_alerts_path(@repo) %>
+</div>

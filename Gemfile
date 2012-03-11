@@ -18,6 +18,8 @@ gem 'rack-openid'
 gem 'json', '1.6.1'
 gem 'rake'
 
+gem 'twitter-bootstrap-rails'
+gem 'simple_form'
 
 # Gems used only for assets and not required
 # in production environments by default.
