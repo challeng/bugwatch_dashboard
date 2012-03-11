@@ -15,7 +15,7 @@
 /tmp
 
 .idea
-./repos
+/repos
 
 config/mailer.yml
 .DS_Store
