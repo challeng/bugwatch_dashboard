@@ -40,7 +40,7 @@ $(document).ready(function() {
                 point: {
                     events: {
                         click: function() {
-                            window.open('/commit/' + this.category);
+                            window.open('<%= repo_path(repo.id) %>/commit/' + this.category);
                         }
                     }
                 },

@@ -8,6 +8,9 @@ BugwatchDashboard::Application.routes.draw do
   resource :sessions
   resources :repos do
     resources :alerts
+    member do
+      match '/commit/:sha' => :commit, :as => :commit
+    end
   end
 
 

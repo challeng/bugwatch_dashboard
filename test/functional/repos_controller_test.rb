@@ -47,4 +47,18 @@ class ReposControllerTest < ActionController::TestCase
     assert_equal subscription, assigns[:subscription]
   end
 
+  test "GET#commit retrieves commit by sha for repo" do
+    commit = commits(:test_commit)
+    get :commit, :id => repo.id, :sha => commit.sha
+    assert_equal commit, assigns(:commit)
+  end
+
+  test "GET#commit redirects to repo if commit doesnt belong to repo" do
+    commit = commits(:test_commit)
+    commit.update_attribute(:repo, nil)
+    get :commit, :id => repo.id, :sha => commit.sha
+    assert_redirected_to repo_path(repo.id)
+    assert_equal "Commit with sha #{commit.sha} could not be found for #{repo.name}", flash[:alert]
+  end
+
 end

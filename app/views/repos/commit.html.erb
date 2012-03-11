@@ -1,0 +1,13 @@
+<h2>Commit: <%= @commit.sha %></h2>
+<p>Accumulated complexity: <%= @commit.complexity %></p>
+
+<div class="well">
+  <h3>Alerts</h3>
+  <ol>
+  <% @commit.alerts.each do |alert| %>
+  <li>
+    <%= render "alerts/alert", :alert => alert %>
+  </li>
+  <% end %>
+  </ol>
+</div>
