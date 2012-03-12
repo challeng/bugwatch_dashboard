@@ -30,7 +30,7 @@ class ActiveRecordCacheTests < ActiveSupport::TestCase
   end
 
   test "#retrieve returns all bug fixes for commit" do
-    Bugwatch::BugFix.expects(:new).with(:date => bug_fix.date_fixed, :file => bug_fix.file, :klass => bug_fix.klass,
+    Bugwatch::BugFix.expects(:new).with(:date => bug_fix.date_fixed.to_s, :file => bug_fix.file, :klass => bug_fix.klass,
                                         :function => bug_fix.function, :sha => commit.sha).returns(:bugwatch_bugfix)
     commit.bug_fixes << bug_fix
     assert_equal [:bugwatch_bugfix], sut.retrieve

@@ -5,7 +5,7 @@ gem 'rails', '3.2.2'
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
 
-gem 'sqlite3'
+gem 'mysql'
 
 gem 'bugwatch', :path => "vendor/gems/bugwatch-0.1"
 gem 'commit_fu', :path => "vendor/gems/commit_fu-0.1"
