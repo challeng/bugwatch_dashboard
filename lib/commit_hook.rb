@@ -10,5 +10,6 @@ class CommitHook < Sinatra::Base
       Resque::Job.create(repository['name'].to_sym, CommitAnalysisWorker,
                          repository['name'], repository['url'], commit['id'])
     end
+    "OK"
   end
 end
