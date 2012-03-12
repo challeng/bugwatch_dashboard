@@ -18,7 +18,7 @@
 .idea
 /repos
 
-config/mailer.yml
+/config/mailer.yml
 .DS_Store
 
 *.swp
