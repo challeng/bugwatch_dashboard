@@ -1,11 +1,5 @@
-#require File.expand_path('./../../test_helper', __FILE__)
-
-require 'test/unit'
+require 'test_helper'
 require 'rack/test'
-require 'mocha'
-require File.expand_path('./../../../lib/commit_analysis_worker', __FILE__)
-require File.expand_path('./../../../lib/commit_hook', __FILE__)
-require 'resque'
 
 ENV['RACK_ENV'] = 'test'
 
