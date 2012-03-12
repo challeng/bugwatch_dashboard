@@ -8,7 +8,6 @@ class CommitAnalysisWorker
       Grit::Git.git_timeout = 10000
       repo = Repo.find_or_create_by_name_and_url(repo_name, repo_url)
       fix_cache = repo.git_fix_cache
-      fix_cache.caching_strategy = ActiveRecordCache.new(repo)
       fix_cache.on_commit = method(:create_and_associate).to_proc.curry[repo]
       fix_cache.add(commit_sha)
       commit = Commit.find_by_sha_and_repo_id(commit_sha, repo.id)
@@ -24,7 +23,8 @@ class CommitAnalysisWorker
       user = User.find_or_create_by_email(:email => grit_commit.committer.email, :name => grit_commit.committer.name)
       commit = Commit.find_or_create_by_sha_and_repo_id(grit_commit.sha, repo.id, :user => user, :complexity => grit_commit.total_score)
       bug_fixes.each do |bug_fix|
-        BugFix.find_or_create_by_file_and_klass_and_function_and_commit_id(bug_fix.file, bug_fix.klass, bug_fix.function, commit.id)
+        BugFix.find_or_create_by_file_and_klass_and_function_and_commit_id(
+            bug_fix.file, bug_fix.klass, bug_fix.function, commit.id, :date_fixed => bug_fix.date)
       end
       Subscription.find_or_create_by_repo_id_and_user_id(repo.id, user.id)
     end

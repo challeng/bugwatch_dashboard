@@ -48,13 +48,6 @@ class CommitAnalysisWorkerTest < ActiveSupport::TestCase
     commits(:test_commit)
   end
 
-  test "#perform sets cache strategy to active record cache" do
-    cache_strategy = ActiveRecordCache.new(repo)
-    ActiveRecordCache.expects(:new).with(repo).returns(cache_strategy)
-    sut.perform(repo_name, repo_url, commit.sha)
-    assert_equal cache_strategy, git_fix_cache.caching_strategy
-  end
-
   test "#perform adds commit to fix cache" do
     git_fix_cache.expects(:add).with(commit.sha)
     sut.perform(repo_name, repo_url, commit.sha)
@@ -86,9 +79,10 @@ class CommitAnalysisWorkerTest < ActiveSupport::TestCase
 
   test "#perform creates bug fixes for commit" do
     Commit.stubs(:find_or_create_by_sha_and_repo_id).returns(commit)
-    bugfix = Bugwatch::BugFix.new(:file => "file.rb", :klass => "Test", :function => "method")
+    bugfix = Bugwatch::BugFix.new(:file => "file.rb", :klass => "Test", :function => "method", :date => "2010-10-10")
     Bugwatch::FixCommit.stubs(:new).with(grit_commit).returns(stub('FixCommit', :fixes => [bugfix]))
-    BugFix.expects(:find_or_create_by_file_and_klass_and_function_and_commit_id).with(bugfix.file, bugfix.klass, bugfix.function, commit.id)
+    BugFix.expects(:find_or_create_by_file_and_klass_and_function_and_commit_id).
+        with(bugfix.file, bugfix.klass, bugfix.function, commit.id, :date_fixed => bugfix.date)
     sut.perform(repo_name, repo_url, commit.sha)
   end
 

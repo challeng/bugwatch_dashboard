@@ -3,6 +3,8 @@ require 'grit'
 class Repo < ActiveRecord::Base
 
   has_many :commits
+  has_many :subscriptions
+  has_many :users, :through => :subscriptions
   has_many :alerts, :through => :commits
   has_many :bug_fixes, :through => :commits
 
@@ -15,7 +17,7 @@ class Repo < ActiveRecord::Base
   end
 
   def git_fix_cache
-    @git_fix_cache ||= Bugwatch::GitFixCache.new(self.name, self.url)
+    @git_fix_cache ||= get_prepared_git_fix_cache
   end
 
   private
@@ -29,5 +31,10 @@ class Repo < ActiveRecord::Base
     Grit::Repo.new("#{REPO_DIR}/#{self.name}")
   end
 
+  def get_prepared_git_fix_cache
+    fix_cache = Bugwatch::GitFixCache.new(self.name, self.url)
+    fix_cache.caching_strategy = ActiveRecordCache.new(self)
+    fix_cache
+  end
 
 end
