@@ -2,7 +2,7 @@ require 'test_helper'
 require 'commit_analysis_worker'
 
 class CommitAnalysisWorkerTest < ActiveSupport::TestCase
-  attr_reader :sut, :repo_name, :repo_url, :commit_sha
+  attr_reader :sut, :repo_name, :repo_url
 
   def setup
     @sut = CommitAnalysisWorker
@@ -13,7 +13,6 @@ class CommitAnalysisWorkerTest < ActiveSupport::TestCase
         returns(repo)
     repo.stubs(:git_fix_cache).returns(git_fix_cache)
     grit_repo.stubs(:commit).with(commit.sha).returns(grit_commit)
-    git_fix_cache.stubs(:write_bug_cache)
     git_fix_cache.stubs(:alerts).returns([])
     git_fix_cache.stubs(:repo).returns(grit_repo)
     git_fix_cache.stubs(:cache).returns(Bugwatch::FixCache.new(10))
@@ -29,7 +28,7 @@ class CommitAnalysisWorkerTest < ActiveSupport::TestCase
   end
 
   def grit_repo
-    @grit_repo ||= stub
+    @grit_repo ||= stub("Grit::Repo")
   end
 
   def user
@@ -61,11 +60,6 @@ class CommitAnalysisWorkerTest < ActiveSupport::TestCase
     sut.perform(repo_name, repo_url, commit.sha)
   end
 
-  test "#perform writes bug cache" do
-    git_fix_cache.expects(:write_bug_cache)
-    sut.perform(repo_name, repo_url, commit.sha)
-  end
-
   test "#perform creates user for each commit author" do
     User.expects(:find_or_create_by_email).with(:email => user.email, :name => user.name).returns(user)
     sut.perform(repo_name, repo_url, commit.sha)
@@ -86,7 +80,15 @@ class CommitAnalysisWorkerTest < ActiveSupport::TestCase
   test "#perform creates commit with complexity score" do
     grit_commit.expects(:extend).with(CommitFu::FlogCommit)
     grit_commit.expects(:average).returns(5.0)
-    Commit.expects(:find_or_create_by_sha_and_repo_id).with(commit.sha, repo.id, has_entry(:complexity => grit_commit.average)).returns(commit)
+    Commit.expects(:find_or_create_by_sha_and_repo_id).with(grit_commit.sha, repo.id, has_entry(:complexity => grit_commit.average)).returns(commit)
+    sut.perform(repo_name, repo_url, commit.sha)
+  end
+
+  test "#perform creates bug fixes for commit" do
+    Commit.stubs(:find_or_create_by_sha_and_repo_id).returns(commit)
+    bugfix = Bugwatch::BugFix.new(:file => "file.rb", :klass => "Test", :function => "method")
+    Bugwatch::FixCommit.stubs(:new).with(grit_commit).returns(stub('FixCommit', :fixes => [bugfix]))
+    BugFix.expects(:find_or_create_by_file_and_klass_and_function_and_commit_id).with(bugfix.file, bugfix.klass, bugfix.function, commit.id)
     sut.perform(repo_name, repo_url, commit.sha)
   end
 

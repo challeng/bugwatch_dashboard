@@ -72,8 +72,9 @@ module Bugwatch
     end
 
     def get_bug_fixes_from_commit(commit)
-      on_commit.call(commit) if on_commit
-      Bugwatch::FixCommit.new(commit).fixes
+      bug_fixes = Bugwatch::FixCommit.new(commit).fixes
+      on_commit.call(commit, bug_fixes) if on_commit
+      bug_fixes
     end
 
     def all_commits
