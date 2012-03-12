@@ -97,7 +97,7 @@ GEM
     mocha (0.10.5)
       metaclass (~> 0.0.1)
     multi_json (1.1.0)
-    mysql2 (0.3.11)
+    mysql2 (0.3.10)
     net-scp (1.0.4)
       net-ssh (>= 1.99.1)
     net-sftp (2.0.5)
@@ -199,7 +199,7 @@ DEPENDENCIES
   jquery-rails
   json (= 1.6.1)
   mocha
-  mysql2 (= 0.3.11)
+  mysql2 (= 0.3.10)
   rack-openid
   rails (= 3.2.2)
   rake
