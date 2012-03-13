@@ -1,5 +1,11 @@
 <div id="title"><h1><%= @repo.name %></h1></div>
 <br />
+<div class="well">
+  <h2>Stats</h2>
+  <p>Total commits: <%= @repo.commits.count %></p>
+  <p>Total files in cache: <%= @repo.git_fix_cache.cache.cache.count %></p>
+  <p>Last updated: <%= @repo.commits.order("id DESC").first.updated_at %></p>
+</div>
 <div class="well subscription">
 <h2>Manage subscription</h2>
 <%= simple_form_for @subscription do |f| %>
@@ -12,5 +18,5 @@
 
 <div class="well">
 <%= render "complexity_chart", :commits => @commits, :repo => @repo %>
-<%= render "fix_cache_chart", :hot_spots => @hot_spots, :repo => @repo %>
+<%= render "fix_cache_chart", :hot_spots => @repo.hot_spots, :repo => @repo %>
 </div>

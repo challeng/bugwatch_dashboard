@@ -60,6 +60,13 @@ class ReposControllerTest < ActionController::TestCase
     assert_equal subscription, assigns[:subscription]
   end
 
+  test "GET#show assigns repo presenter" do
+    presenter = RepoPresenter.new(repo)
+    RepoPresenter.expects(:new).with(repo).returns(presenter)
+    get :show, :id => repo.id
+    assert_equal presenter, assigns(:repo_presenter)
+  end
+
   test "GET#commit retrieves commit by sha for repo" do
     get :commit, :id => repo.id, :sha => commit.sha
     assert_equal commit, assigns(:commit)
