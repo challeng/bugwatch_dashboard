@@ -7,13 +7,14 @@ class ReposController < ApplicationController
   end
 
   def show
-    @subscription = current_user.subscriptions.find_by_user_id(current_user.id)
+    @subscription = current_user.subscriptions.find_by_repo_id(@repo.id)
     @commits = @repo.commits.order("id DESC").limit(20)
-    @hot_spots = @repo.git_fix_cache.cache.hot_spots
+    @hot_spots = @repo.hot_spots
   end
 
   def commit
     @commit = @repo.commits.find_by_sha!(params[:sha])
+    @commit_scores = @commit.accumulated_commit_scores
   rescue ActiveRecord::RecordNotFound
     redirect_to repo_path(@repo), :alert => "Commit with sha #{params[:sha]} could not be found for #{@repo.name}"
   end

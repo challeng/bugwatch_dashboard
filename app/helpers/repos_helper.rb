@@ -13,4 +13,10 @@ module ReposHelper
     end.to_json
   end
 
+  def commit_complexity_graph_data(commit_scores)
+    commit_scores.map do |(file_name, score)|
+      {:name => file_name, :data => [score]}
+    end.to_json
+  end
+
 end

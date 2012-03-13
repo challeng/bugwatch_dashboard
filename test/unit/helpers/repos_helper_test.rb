@@ -14,4 +14,9 @@ class ReposHelperTest < ActionView::TestCase
     assert_equal expected, fix_cache_graph_data([hot_spot, hot_spot2])
   end
 
+  test "#commit_complexity_graph_data returns json with files and accumulated scores" do
+    expected = [{:name => "file.rb", :data => [5]}, {:name => "file2.rb", :data => [8]}].to_json
+    assert_equal expected, commit_complexity_graph_data([["file.rb", 5], ["file2.rb", 8]])
+  end
+
 end

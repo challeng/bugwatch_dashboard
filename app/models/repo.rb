@@ -20,6 +20,18 @@ class Repo < ActiveRecord::Base
     @git_fix_cache ||= get_prepared_git_fix_cache
   end
 
+  def hot_spots
+    self.git_fix_cache.cache.hot_spots
+  end
+
+  def grit
+    @grit ||= Grit::Repo.new(path)
+  end
+
+  def path
+    "#{REPO_DIR}/#{self.name}"
+  end
+
   private
 
   def clone_repo
@@ -27,8 +39,8 @@ class Repo < ActiveRecord::Base
   end
 
   def get_grit_repo
-    Kernel.system("cd #{REPO_DIR}/#{self.name}; git pull origin master")
-    Grit::Repo.new("#{REPO_DIR}/#{self.name}")
+    Kernel.system("cd #{path}; git pull origin master")
+    Grit::Repo.new(path)
   end
 
   def get_prepared_git_fix_cache
