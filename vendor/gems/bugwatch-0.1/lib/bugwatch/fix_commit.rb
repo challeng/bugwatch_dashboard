@@ -17,7 +17,7 @@ module Bugwatch
     end
 
     def fix_commit?
-      commit.short_message =~ /(\sfix(es|ed)?)|\sbug(s)?/
+      commit.short_message =~ /((^fix|\sfix)(es|ed)?)|\sbug(s)?/
     end
 
     def get_bug_fixes(diff, file)

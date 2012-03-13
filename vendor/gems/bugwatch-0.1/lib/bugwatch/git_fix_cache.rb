@@ -3,7 +3,7 @@ module Bugwatch
   class GitFixCache
 
     REPOS_DIR = "repos"
-    COMMIT_CHUNK_SIZE = 500
+    COMMIT_CHUNK_SIZE = 200
 
     attr_writer :caching_strategy
     attr_accessor :on_commit

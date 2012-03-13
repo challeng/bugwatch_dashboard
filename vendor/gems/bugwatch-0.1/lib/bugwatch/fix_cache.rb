@@ -41,7 +41,7 @@ module Bugwatch
     end
 
     def cache_limit
-      @file_count / @limit
+      (@file_count * (@limit.to_f / 100)).to_i
     end
 
   end
