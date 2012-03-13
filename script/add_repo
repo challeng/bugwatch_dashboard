@@ -21,7 +21,7 @@ payload = <<-JSON
   },
   "commits": [
     {
-      "id": "8b2eab488435308c269de1bb23dffc5c0164a3a7",
+      "id": "2b4069fc5ef45d56763716da78f12a1334cda917",
       "url": "http://github.com/defunkt/github/commit/de8251ff97ee194a289832576287d6f8ad74e3d0",
       "author": {
         "email": "chris@ozmm.org",
