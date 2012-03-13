@@ -56,6 +56,12 @@ namespace :shared_config do
   end
 end
 
+namespace :repos do
+  task :symlink do
+    run "ln -nfs #{shared_path}/repos #{latest_release}/"
+  end
+end
+
 set :god_config,   "#{current_path}/config/god/resque.god"
 set :god_log,      "#{deploy_to}/shared/log/god.log"
 set :god_pid_file, "#{deploy_to}/shared/log/god.pid"
@@ -105,6 +111,12 @@ namespace :deploy do
   #end
 end
 
+namespace :assets do
+  task :precompile do
+    run "bundle exec rake assets:precompile"
+  end
+end
+
 #before "deploy:restart", "deploy:symlink_shared"
 
 before "deploy:update_code" do
@@ -112,6 +124,8 @@ end
 
 after "deploy:update_code" do
    shared_config.symlink
+   repos.symlink
+   assets.precompile
 end
 before 'deploy', 'god:stop'
 after "deploy:rollback", "god:start"
