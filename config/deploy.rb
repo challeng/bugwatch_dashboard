@@ -113,7 +113,7 @@ end
 
 namespace :assets do
   task :precompile do
-    run "bundle exec rake assets:precompile"
+    run "cd #{latest_release}; bundle exec rake assets:precompile"
   end
 end
 
