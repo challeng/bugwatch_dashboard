@@ -8,11 +8,7 @@
 <ol>
 <% @related_bug_fixes.each do |bug_fix| %>
   <li>
-  <ul>
-      <li>File: <%= bug_fix.file %></li>
-      <li>Class: <%= bug_fix.klass %></li>
-      <li>Method: <%= bug_fix.function %></li>
-  </ul>
+    <%= render "repos/bug_fix", :bug_fix => bug_fix %>
   </li>
 <% end %>
 </ol>

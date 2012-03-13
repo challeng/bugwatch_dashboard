@@ -1,0 +1,14 @@
+<h2><%= @filename %></h2>
+
+<div class="well">
+  <h2>Related bug fixes</h2>
+  <ol>
+  <% @related_bug_fixes.each do |bug_fix| %>
+    <li>
+    <%= render "bug_fix", :bug_fix => bug_fix %>
+    </li>
+    <%= link_to "View commit", commit_repo_path(@repo.id, bug_fix.commit.sha) %>
+    <br /><br />
+  <% end %>
+  </ol>
+</div>

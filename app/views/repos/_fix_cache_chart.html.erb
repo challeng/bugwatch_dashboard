@@ -24,7 +24,25 @@ $(document).ready(function() {
         xAxis: {
             categories: []
         },
+        tooltip: {
+            formatter: function() {
+                    return this.series.name + '<br />Score: ' + this.y;
+            }
+        },
         plotOptions: {
+            series: {
+                cursor: 'pointer',
+                point: {
+                    events: {
+                        click: function() {
+                            window.open('<%= repo_path(repo.id) %>/file/' + this.series.name);
+                        }
+                    }
+                },
+                marker: {
+                    lineWidth: 1
+                }
+            },
             bar: {
                 dataLabels: {
                     enabled: true

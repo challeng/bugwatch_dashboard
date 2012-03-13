@@ -80,4 +80,15 @@ class ReposControllerTest < ActionController::TestCase
     assert_equal [["file.rb", 2]], assigns(:commit_scores)
   end
 
+  test "GET#file adds .rb extension to filename" do
+    get :file, :id => commit.repo.id, :filename => "path/to/file"
+    assert_equal "path/to/file.rb", assigns(:filename)
+  end
+
+  test "GET#file gets related bug fixes to file" do
+    bug_fix = BugFix.create(:file => "path/to/file.rb", :klass => "Test", :function => "abc", :commit => commit)
+    get :file, :id => commit.repo.id, :filename => "path/to/file"
+    assert_equal [bug_fix], assigns(:related_bug_fixes)
+  end
+
 end

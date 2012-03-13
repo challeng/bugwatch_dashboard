@@ -12,5 +12,5 @@
 
 <div class="well">
 <%= render "complexity_chart", :commits => @commits, :repo => @repo %>
-<%= render "fix_cache_chart", :hot_spots => @hot_spots %>
+<%= render "fix_cache_chart", :hot_spots => @hot_spots, :repo => @repo %>
 </div>

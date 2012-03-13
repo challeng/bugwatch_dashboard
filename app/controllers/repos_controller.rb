@@ -1,6 +1,6 @@
 class ReposController < ApplicationController
 
-  before_filter :retrieve_repo, :only => [:show, :commit]
+  before_filter :retrieve_repo, :only => [:show, :commit, :file]
 
   def index
     @repos = current_user.repos
@@ -17,6 +17,11 @@ class ReposController < ApplicationController
     @commit_scores = @commit.accumulated_commit_scores
   rescue ActiveRecord::RecordNotFound
     redirect_to repo_path(@repo), :alert => "Commit with sha #{params[:sha]} could not be found for #{@repo.name}"
+  end
+
+  def file
+    @filename = "#{params[:filename]}.rb"
+    @related_bug_fixes = @repo.bug_fixes.where("file = ?", @filename)
   end
 
   private

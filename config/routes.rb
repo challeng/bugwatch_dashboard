@@ -10,6 +10,7 @@ BugwatchDashboard::Application.routes.draw do
     resources :alerts
     member do
       match '/commit/:sha' => :commit, :as => :commit
+      match '/file/*filename' => :file, :as => :file
     end
   end
 
