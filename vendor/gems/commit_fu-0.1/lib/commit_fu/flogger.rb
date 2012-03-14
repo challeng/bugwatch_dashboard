@@ -20,7 +20,7 @@ module CommitFu
 
     def scores(diffs_to_score=ruby_diffs)
       @scores ||= diffs_to_score.map do |diff|
-        [diff_filename(diff)] + diff_score(diff)
+        [diff_filename(diff), *diff_score(diff).map{|score| score || 0.0 }]
       end
     end
 
@@ -55,7 +55,7 @@ module CommitFu
       if before_score && after_score
         after_score - before_score
       else
-        before_score or after_score
+        0.0
       end
     end
 
