@@ -29,8 +29,8 @@ module CommitFu
     end
 
     def total_score
-      scores.reduce(0) do |calculated_score, (_, _, after_score)|
-        calculated_score + after_score
+      scores.reduce(0) do |calculated_score, (_, before_score, after_score)|
+        calculated_score + (after_score - before_score)
       end
     end
 
