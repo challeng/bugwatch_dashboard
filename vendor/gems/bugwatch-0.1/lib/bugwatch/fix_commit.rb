@@ -9,7 +9,7 @@ module Bugwatch
     end
 
     def fixes
-      return [] unless fix_commit?
+      return [] unless keywords_in_commit_message?
       ruby_files.inject([]) do |bug_fixes, file|
         diff = commit.diffs.find{|d| d.b_path == file}
         if diff
@@ -40,16 +40,8 @@ module Bugwatch
       files.select { |file| file.match(/\.rb$/) && !file.match(/^spec\//) }
     end
 
-    def fix_commit?
-      keywords_in_commit_message? && non_merge_commit?
-    end
-
     def keywords_in_commit_message?
       commit.short_message =~ /((^fix|\sfix)(es|ed)?)|\sbug(s)?/
-    end
-
-    def non_merge_commit?
-      commit.parents.count == 1
     end
 
   end

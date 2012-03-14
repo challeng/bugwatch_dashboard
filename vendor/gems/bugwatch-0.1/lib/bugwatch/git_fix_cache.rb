@@ -81,10 +81,14 @@ module Bugwatch
       Enumerator.new do |y|
         ((repo.commit_count / COMMIT_CHUNK_SIZE) + 1).times do |offset|
           repo.commits('master', COMMIT_CHUNK_SIZE, offset * COMMIT_CHUNK_SIZE).each do |commit|
-            y << commit
+            y << commit unless merge_commit?(commit)
           end
         end
       end
+    end
+
+    def merge_commit?(commit)
+      commit.parents.count > 1
     end
 
     def path_to_repo
