@@ -8,17 +8,19 @@ module Bugwatch
       @commit = commit
     end
 
-    def files
-      commit.stats.files.map(&:first)
+    def fixes
+      return [] unless fix_commit?
+      ruby_files.inject([]) do |bug_fixes, file|
+        diff = commit.diffs.find{|d| d.b_path == file}
+        if diff
+          bug_fixes + get_bug_fixes(diff, file)
+        else
+          bug_fixes
+        end
+      end
     end
 
-    def ruby_files
-      files.select { |file| file.match(/\.rb$/) && !file.match(/^spec\//) }
-    end
-
-    def fix_commit?
-      commit.short_message =~ /((^fix|\sfix)(es|ed)?)|\sbug(s)?/
-    end
+    private
 
     def get_bug_fixes(diff, file)
       DiffParser.parse_class_and_functions(diff).flat_map do |klass, methods|
@@ -30,16 +32,24 @@ module Bugwatch
       []
     end
 
-    def fixes
-      return [] unless fix_commit?
-      ruby_files.inject([]) do |bug_fixes, file|
-        diff = commit.diffs.find{|d| d.b_path == file}
-        if diff
-          bug_fixes + get_bug_fixes(diff, file)
-        else
-          bug_fixes
-        end
-      end
+    def files
+      commit.stats.files.map(&:first)
+    end
+
+    def ruby_files
+      files.select { |file| file.match(/\.rb$/) && !file.match(/^spec\//) }
+    end
+
+    def fix_commit?
+      keywords_in_commit_message? && non_merge_commit?
+    end
+
+    def keywords_in_commit_message?
+      commit.short_message =~ /((^fix|\sfix)(es|ed)?)|\sbug(s)?/
+    end
+
+    def non_merge_commit?
+      commit.parents.count == 1
     end
 
   end
