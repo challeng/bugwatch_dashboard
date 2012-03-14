@@ -13,5 +13,16 @@
 </div>
 
 <div class="well">
-  <%= render "commit_complexity_chart", :commit_scores => @commit_scores %>
+  <%= render "commit_complexity_chart", :commit_scores => @commit.accumulated_commit_scores %>
+</div>
+
+<div class="well">
+  <h2>Diff</h2>
+  <div class="code">
+  <% @commit.diffs.each do |diff| %>
+      <% diff.split("\n").each do |diff_line| %>
+         <p><%= diff_line %></p>
+      <% end %>
+  <% end %>
+  </div>
 </div>

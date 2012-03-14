@@ -13,6 +13,10 @@ class Commit < ActiveRecord::Base
     end
   end
 
+  def diffs
+    grit.diffs.map(&:diff)
+  end
+
   private
 
   def grit

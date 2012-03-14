@@ -14,7 +14,6 @@ class ReposController < ApplicationController
 
   def commit
     @commit = @repo.commits.find_by_sha!(params[:sha])
-    @commit_scores = @commit.accumulated_commit_scores
   rescue ActiveRecord::RecordNotFound
     redirect_to repo_path(@repo), :alert => "Commit with sha #{params[:sha]} could not be found for #{@repo.name}"
   end
