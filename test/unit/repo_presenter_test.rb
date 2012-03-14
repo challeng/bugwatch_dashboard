@@ -29,4 +29,9 @@ class RepoPresenterTest < ActiveSupport::TestCase
     assert_equal commit.updated_at, sut.last_updated
   end
 
+  test "#total_complexity sums complexity for a repos commits" do
+    expected = repo.commits.sum(:complexity)
+    assert_equal expected, sut.total_complexity
+  end
+
 end

@@ -18,4 +18,8 @@ class RepoPresenter
     @repo.commits.last.updated_at
   end
 
+  def total_complexity
+    @repo.commits.sum(:complexity)
+  end
+
 end
