@@ -3,7 +3,8 @@ require 'test_helper'
 class ReposControllerTest < ActionController::TestCase
 
   def grit_commit
-    @grit_commit ||= stub(:diffs => [stub("Diff", :diff => "diff text")] * 2, :scores => [], :short_message => "")
+    @grit_commit ||= stub(:diffs => [stub("Diff", :diff => "diff text")] * 2, :scores => [], :short_message => "",
+                          :committed_date => "2010-10-10")
   end
 
   attr_reader :user, :repo, :subscription, :commit
