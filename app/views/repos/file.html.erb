@@ -3,11 +3,17 @@
 <div class="well">
   <h2>Related bug fixes</h2>
   <ol>
-  <% @related_bug_fixes.each do |bug_fix| %>
+  <% @related_bug_fixes.group_by{|bug_fix| bug_fix.commit.sha}.each do |(commit_sha, bug_fixes)| %>
+    <h3>Commit: <%= link_to commit_sha, commit_repo_path(@repo.id, commit_sha) %></h3>
+    <div style="padding-left: 50px;">
+    <% bug_fixes.each do |bug_fix| %>
+    <p>
     <li>
     <%= render "bug_fix", :bug_fix => bug_fix %>
     </li>
-    <%= link_to "View commit", commit_repo_path(@repo.id, bug_fix.commit.sha) %>
+    </p>
+    <% end %>
+    </div>
     <br /><br />
   <% end %>
   </ol>
