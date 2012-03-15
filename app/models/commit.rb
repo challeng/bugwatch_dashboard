@@ -17,6 +17,14 @@ class Commit < ActiveRecord::Base
     grit.diffs.map(&:diff)
   end
 
+  def message
+    grit.short_message
+  end
+
+  def date
+    grit.committed_date
+  end
+
   private
 
   def grit
