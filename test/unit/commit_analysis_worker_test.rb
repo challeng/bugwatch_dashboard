@@ -37,7 +37,7 @@ class CommitAnalysisWorkerTest < ActiveSupport::TestCase
 
   def grit_commit
     @grit_commit ||= stub(:committer => stub(:name => user.name, :email => user.email), :short_message => "test",
-                          :sha => commit.sha, :total_score => 5.0)
+                          :sha => commit.sha, :total_score => 5.0, :committed_date => '2010-10-10')
   end
 
   def subscription
@@ -83,6 +83,11 @@ class CommitAnalysisWorkerTest < ActiveSupport::TestCase
     Bugwatch::FixCommit.stubs(:new).with(grit_commit).returns(stub('FixCommit', :fixes => [bugfix]))
     BugFix.expects(:find_or_create_by_file_and_klass_and_function_and_commit_id).
         with(bugfix.file, bugfix.klass, bugfix.function, commit.id, :date_fixed => bugfix.date)
+    sut.perform(repo_name, repo_url, commit.sha)
+  end
+
+  test "#perform creates commit with committed date as date" do
+    Commit.expects(:find_or_create_by_sha_and_repo_id).with(grit_commit.sha, repo.id, has_entry(:date => grit_commit.committed_date)).returns(commit)
     sut.perform(repo_name, repo_url, commit.sha)
   end
 

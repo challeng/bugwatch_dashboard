@@ -8,7 +8,7 @@ class ReposController < ApplicationController
 
   def show
     @subscription = current_user.subscriptions.find_by_repo_id(@repo.id)
-    @commits = @repo.commits.order("id DESC").limit(20)
+    @commits = @repo.commits.order("date DESC").limit(20)
     @repo_presenter = RepoPresenter.new(@repo)
   end
 

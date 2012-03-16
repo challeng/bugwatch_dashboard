@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120307194640) do
+ActiveRecord::Schema.define(:version => 20120315235603) do
 
   create_table "alerts", :force => true do |t|
     t.integer  "commit_id"
@@ -43,6 +43,7 @@ ActiveRecord::Schema.define(:version => 20120307194640) do
     t.datetime "updated_at", :null => false
     t.integer  "user_id"
     t.float    "complexity"
+    t.datetime "date"
   end
 
   add_index "commits", ["sha"], :name => "index_commits_on_sha", :unique => true

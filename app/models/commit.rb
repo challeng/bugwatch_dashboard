@@ -21,10 +21,6 @@ class Commit < ActiveRecord::Base
     grit.short_message
   end
 
-  def date
-    grit.committed_date
-  end
-
   private
 
   def grit

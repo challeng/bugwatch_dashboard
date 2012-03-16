@@ -21,7 +21,8 @@ class CommitAnalysisWorker
     def create_and_associate(repo, grit_commit, bug_fixes)
       grit_commit.extend(CommitFu::FlogCommit)
       user = User.find_or_create_by_email(:email => grit_commit.committer.email, :name => grit_commit.committer.name)
-      commit = Commit.find_or_create_by_sha_and_repo_id(grit_commit.sha, repo.id, :user => user, :complexity => grit_commit.total_score)
+      commit = Commit.find_or_create_by_sha_and_repo_id(grit_commit.sha, repo.id, :user => user,
+                                          :complexity => grit_commit.total_score, :date => grit_commit.committed_date)
       bug_fixes.each do |bug_fix|
         BugFix.find_or_create_by_file_and_klass_and_function_and_commit_id(
             bug_fix.file, bug_fix.klass, bug_fix.function, commit.id, :date_fixed => bug_fix.date)
