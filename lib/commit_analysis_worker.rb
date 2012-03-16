@@ -5,7 +5,8 @@ class CommitAnalysisWorker
   class << self
 
     def perform(repo_name, repo_url, commit_sha)
-      Grit::Git.git_timeout = 10000
+      Grit::Git.git_timeout = 1000000000
+      Grit::Git.git_max_size = 1000000000
       repo = Repo.find_or_create_by_name_and_url(repo_name, repo_url)
       fix_cache = repo.git_fix_cache
       fix_cache.on_commit = method(:create_and_associate).to_proc.curry[repo]
