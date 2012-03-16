@@ -79,11 +79,18 @@ module Bugwatch
 
     def all_commits
       Enumerator.new do |y|
-        ((repo.commit_count / COMMIT_CHUNK_SIZE) + 1).times do |offset|
-          repo.commits('master', COMMIT_CHUNK_SIZE, offset * COMMIT_CHUNK_SIZE).each do |commit|
+        reverse_offset(repo.commit_count) do |offset|
+          repo.commits('master', COMMIT_CHUNK_SIZE, offset).each do |commit|
             y << commit unless merge_commit?(commit)
           end
         end
+      end
+    end
+
+    def reverse_offset(commit_count)
+      ((commit_count / COMMIT_CHUNK_SIZE) + 1).times do |offset|
+        _offset = commit_count - (COMMIT_CHUNK_SIZE * (offset + 1))
+        yield _offset < 0 ? 0 : _offset
       end
     end
 
