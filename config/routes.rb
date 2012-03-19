@@ -8,6 +8,11 @@ BugwatchDashboard::Application.routes.draw do
   resource :sessions
   resources :repos do
     resources :alerts
+    resources :tags do
+      member do
+        match '/diff/:diff_id' => :diff, :as => :diff
+      end
+    end
     member do
       match '/commit/:sha' => :commit, :as => :commit
       match '/file/*filename' => :file, :as => :file
