@@ -11,9 +11,8 @@ class RepoTest < ActiveSupport::TestCase
     sut.save
   end
 
-  test "#repo updates and returns grit repo" do
-    Kernel.expects(:system).with("cd repos/#{sut.name}; git pull origin master")
-    grit_repository = stub("Grit::Repo  ")
+  test "#repo returns grit repo" do
+    grit_repository = stub("Grit::Repo")
     Grit::Repo.expects(:new).with("repos/#{sut.name}").returns(grit_repository)
     assert_equal grit_repository, sut.repo
   end

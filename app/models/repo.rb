@@ -24,6 +24,10 @@ class Repo < ActiveRecord::Base
     self.git_fix_cache.cache.hot_spots
   end
 
+  def tags
+    grit.tags
+  end
+
   def grit
     @grit ||= Grit::Repo.new(path)
   end
@@ -39,7 +43,6 @@ class Repo < ActiveRecord::Base
   end
 
   def get_grit_repo
-    Kernel.system("cd #{path}; git pull origin master")
     Grit::Repo.new(path)
   end
 
