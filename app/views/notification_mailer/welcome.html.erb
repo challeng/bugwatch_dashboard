@@ -1,9 +1,4 @@
-<html>
-<body>
-
-Hello, <%= @user.name %>
-
-Bugwatch has generated the following alerts:
+Welcome to bugwatch!
 
 <% @presenter.files.each do |file, klasses| %>
   <%= file %>
@@ -14,6 +9,3 @@ Bugwatch has generated the following alerts:
     <% end %>
   <% end %>
 <% end %>
-
-</body>
-</html>

@@ -32,8 +32,15 @@ class CommitAnalysisWorker
     end
 
     def deliver_alerts(commit, fix_cache)
+      existing_alerts = commit.user.alerts.any?
       alerts = create_alerts(commit, fix_cache)
-      NotificationMailer.alert(alerts, commit.user, :to => commit.user.email).deliver if send_alert?(alerts, commit)
+      if send_alert?(alerts, commit)
+        if existing_alerts
+          NotificationMailer.alert(alerts, commit.user).deliver
+        else
+          NotificationMailer.welcome(alerts, commit.user).deliver
+        end
+      end
     end
 
     def create_alerts(commit, fix_cache)

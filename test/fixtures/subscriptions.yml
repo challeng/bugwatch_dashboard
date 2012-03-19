@@ -3,3 +3,5 @@
 test_subscription:
   user: test_user
   repo: test_repo
+  notify_on_analysis: true
+

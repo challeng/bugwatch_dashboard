@@ -99,22 +99,28 @@ class CommitAnalysisWorkerTest < ActiveSupport::TestCase
     @bug_fix2 ||= Bugwatch::BugFix.new(:file => 'file2.rb', :klass => 'Test', :function => 'function')
   end
 
+  def alert
+    @alert ||= Alert.new(:commit => commit).tap{|a| a.stubs(:id).returns(1) }
+  end
+
+  def alert2
+    @alert2 ||= Alert.new(:commit => commit).tap{|a| a.stubs(:id).returns(2) }
+  end
+
   test "#perform creates alert for each alerted bug fix" do
-    alert1, alert2 = Alert.new, Alert.new
     git_fix_cache.expects(:alerts).with(commit.sha).returns([bug_fix, bug_fix2])
-    Alert.expects(:create).with(:commit => commit, :file => 'file.rb', :klass => 'Class', :function => 'function').returns(alert1)
+    Alert.expects(:create).with(:commit => commit, :file => 'file.rb', :klass => 'Class', :function => 'function').returns(alert)
     Alert.expects(:create).with(:commit => commit, :file => 'file2.rb', :klass => 'Test', :function => 'function').returns(alert2)
     sut.perform(repo_name, repo_url, commit.sha)
   end
 
-  test "#perform delivers alerts" do
+  test "#perform delivers alerts if not users first alert" do
     subscription.update_attribute(:notify_on_analysis, true)
-    alert1, alert2 = Alert.new, Alert.new
     mailer = stub
     git_fix_cache.expects(:alerts).with(commit.sha).returns([bug_fix, bug_fix2])
-    Alert.stubs(:create).with(:commit => commit, :file => 'file.rb', :klass => 'Class', :function => 'function').returns(alert1)
+    Alert.stubs(:create).with(:commit => commit, :file => 'file.rb', :klass => 'Class', :function => 'function').returns(alert)
     Alert.stubs(:create).with(:commit => commit, :file => 'file2.rb', :klass => 'Test', :function => 'function').returns(alert2)
-    NotificationMailer.expects(:alert).with([alert1, alert2], user, :to => commit.user.email).returns(mailer)
+    NotificationMailer.expects(:alert).with([alert, alert2], user).returns(mailer)
     mailer.expects(:deliver)
     sut.perform(repo_name, repo_url, commit.sha)
   end
@@ -132,5 +138,20 @@ class CommitAnalysisWorkerTest < ActiveSupport::TestCase
     sut.perform(repo_name, repo_url, commit.sha)
   end
 
+  test "#perform delivers welcome email instead of alert email if first alert" do
+    user.alerts.each &:destroy
+    Alert.stubs(:create).returns(alert)
+    mailer = stub
+    git_fix_cache.expects(:alerts).with(commit.sha).returns([bug_fix])
+    NotificationMailer.expects(:welcome).with([alert], user).returns(mailer)
+    mailer.expects(:deliver)
+    sut.perform(repo_name, repo_url, commit.sha)
+  end
+
+  test "#perform does not deliver welcome email if not first alert" do
+    git_fix_cache.expects(:alerts).with(commit.sha).returns([bug_fix])
+    NotificationMailer.expects(:welcome).never
+    sut.perform(repo_name, repo_url, commit.sha)
+  end
 
 end
