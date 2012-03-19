@@ -17,7 +17,7 @@ class SubscriptionControllerTest < ActionController::TestCase
   end
 
   test "POST#update updates subscription" do
-    assert_false subscription.notify_on_analysis
+    subscription.update_attribute(:notify_on_analysis, false)
     post :update, :id => subscription.id, :subscription => {:notify_on_analysis => true}
     assert_true subscription.reload.notify_on_analysis
   end
