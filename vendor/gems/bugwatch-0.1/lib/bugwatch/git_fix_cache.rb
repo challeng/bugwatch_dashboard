@@ -90,7 +90,11 @@ module Bugwatch
     def reverse_offset(commit_count)
       ((commit_count / COMMIT_CHUNK_SIZE) + 1).times do |offset|
         _offset = commit_count - (COMMIT_CHUNK_SIZE * offset)
-        yield _offset < 0 ? 0 : _offset
+        if commit_count < COMMIT_CHUNK_SIZE || _offset < 0
+          yield 0
+        else
+          yield _offset
+        end
       end
     end
 
