@@ -1,27 +1,32 @@
-<h1>Alerts for <%= @repo.name %></h1>
+<ul class="nav nav-tabs">
+  <li><a href="#your_alerts" data-toggle="tab">Your Alerts</a></li>
+  <li><a href="#all_alerts" data-toggle="tab">All Alerts</a></li>
+</ul>
 
-<div class="well">
-<h2>Your alerts</h2>
-<ol>
-<% @user_alerts.each do |alert| %>
-  <%= link_to repo_alert_path(@repo, alert) do %>
-  <li>
-    <%= render "alerts/alert", :alert => alert %>
-  </li>
-  <% end %>
-<% end %>
-</ol>
-</div>
+<div class="tab-content">
+    <div class="tab-pane active" id="your_alerts">
+    <h2>Your alerts</h2>
+    <ol>
+    <% @user_alerts.each do |alert| %>
+      <%= link_to repo_alert_path(@repo, alert) do %>
+      <li>
+        <%= render "alerts/alert", :alert => alert %>
+      </li>
+      <% end %>
+    <% end %>
+    </ol>
+    </div>
 
-<div class="well">
-<h2>All alerts</h2>
-<ol>
-<% @alerts.each do |alert| %>
-  <%= link_to repo_alert_path(@repo, alert) do %>
-  <li>
-    <%= render "alerts/alert", :alert => alert %>
-  </li>
-  <% end %>
-<% end %>
-</ol>
+    <div class="tab-pane" id="all_alerts">
+    <h2>All alerts</h2>
+    <ol>
+    <% @alerts.each do |alert| %>
+      <%= link_to repo_alert_path(@repo, alert) do %>
+      <li>
+        <%= render "alerts/alert", :alert => alert %>
+      </li>
+      <% end %>
+    <% end %>
+    </ol>
+    </div>
 </div>
