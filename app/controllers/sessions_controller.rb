@@ -41,13 +41,9 @@ class SessionsController < ApplicationController
     email = ax.get_single(ATTRIBUTE_EXCHANGE[:email])
     name = [ax.get_single(ATTRIBUTE_EXCHANGE[:first_name]),
             ax.get_single(ATTRIBUTE_EXCHANGE[:last_name])].join(" ")
-    existing_user = User.find_by_email(email)
-    if existing_user
-      existing_user.update_attribute(:identifier_url, identifier_url)
-      existing_user
-    else
-      User.create!(:identifier_url => identifier_url, :email => email, :name => name)
-    end
+    user = User.find_or_create_by_email(email, :name => name)
+    user.update_attribute(:identifier_url, identifier_url)
+    user
   end
 
 end

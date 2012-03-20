@@ -28,17 +28,14 @@ class SessionsControllerTest < ActionController::TestCase
 
   test "POST#create creates user if doesn't exist on success" do
     user.id = 5
-    User.stubs(:find_by_email).with(email).returns(nil)
-    User.expects(:create!).
-        with(:identifier_url => identifier_url, :email => email, :name => "#{first_name} #{last_name}").
-        returns(user)
+    User.expects(:find_or_create_by_email).with(email, :name => "#{first_name} #{last_name}").returns(user)
     post :create
     assert_equal user.id, session[:user_id]
   end
 
   test "POST#create updates identifier_url if user exists" do
     user.id = 6
-    User.stubs(:find_by_email).with(email).returns(user)
+    User.stubs(:find_or_create_by_email).returns(user)
     user.expects(:update_attribute).with(:identifier_url, identifier_url)
     post :create
     assert_equal user.id, session[:user_id]
