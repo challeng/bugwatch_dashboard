@@ -41,8 +41,8 @@ class ReposControllerTest < ActionController::TestCase
     assert_equal "Repo with ID #{repo.id} could not be found", flash[:alert]
   end
 
-  test "GET#show assigns subscription @subscription" do
-    get :show, :id => repo.id
+  test "GET#subscription assigns subscription @subscription" do
+    get :subscription, :id => repo.id
     assert_equal subscription, assigns[:subscription]
   end
 

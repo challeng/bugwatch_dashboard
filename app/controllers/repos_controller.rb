@@ -1,13 +1,12 @@
 class ReposController < ApplicationController
 
-  before_filter :retrieve_repo, :only => [:show, :commit, :file]
+  before_filter :retrieve_repo, :only => [:show, :commit, :file, :subscription]
 
   def index
     @repos = current_user.repos
   end
 
   def show
-    @subscription = current_user.subscriptions.find_by_repo_id(@repo.id)
     @commits = @repo.commits.order("date DESC").limit(50).reverse
     @repo_presenter = RepoPresenter.new(@repo)
   end
@@ -21,6 +20,10 @@ class ReposController < ApplicationController
   def file
     @filename = "#{params[:filename]}.rb"
     @related_bug_fixes = @repo.bug_fixes.where("file = ?", @filename)
+  end
+
+  def subscription
+    @subscription = current_user.subscriptions.find_by_repo_id(@repo.id)
   end
 
   private
