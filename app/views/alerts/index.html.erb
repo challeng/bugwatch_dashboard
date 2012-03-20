@@ -5,6 +5,7 @@
 
 <div class="tab-content">
     <div class="tab-pane active" id="your_alerts">
+    <div class="well">
     <h2>Your alerts</h2>
     <ol>
     <% @user_alerts.each do |alert| %>
@@ -16,8 +17,10 @@
     <% end %>
     </ol>
     </div>
+    </div>
 
     <div class="tab-pane" id="all_alerts">
+    <div class="well">
     <h2>All alerts</h2>
     <ol>
     <% @alerts.each do |alert| %>
@@ -28,5 +31,6 @@
       <% end %>
     <% end %>
     </ol>
+    </div>
     </div>
 </div>
