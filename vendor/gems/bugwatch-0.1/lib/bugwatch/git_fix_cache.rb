@@ -23,7 +23,7 @@ module Bugwatch
 
     def add(commit_sha)
       unless bug_fixes_in_cache.map(&:sha).include?(commit_sha)
-        Kernel.system("cd #{@repo_name}; git pull origin master")
+        Kernel.system("cd #{path_to_repo}; git pull origin master")
         commit = repo.commit(commit_sha)
         cache.add(*get_bug_fixes_from_commit(commit))
       end
