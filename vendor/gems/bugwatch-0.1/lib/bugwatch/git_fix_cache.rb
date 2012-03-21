@@ -23,7 +23,7 @@ module Bugwatch
 
     def add(commit_sha)
       unless bug_fixes_in_cache.map(&:sha).include?(commit_sha)
-        Kernel.system("cd #{path_to_repo}; git pull origin master")
+        update_repo
         commit = repo.commit(commit_sha)
         cache.add(*get_bug_fixes_from_commit(commit))
       end
@@ -116,6 +116,10 @@ module Bugwatch
         Kernel.system("cd #{REPOS_DIR}; git clone #{@repo_url}")
       end
       Grit::Repo.new(path_to_repo)
+    end
+
+    def update_repo
+      Kernel.system("cd #{path_to_repo}; git pull origin master")
     end
 
     def get_files(contents)

@@ -14,6 +14,7 @@ class CommitAnalysisWorkerTest < ActiveSupport::TestCase
     repo.stubs(:git_fix_cache).returns(git_fix_cache)
     grit_repo.stubs(:commit).with(commit.sha).returns(grit_commit)
     git_fix_cache.stubs(:alerts).returns([])
+    git_fix_cache.stubs(:update_repo)
     git_fix_cache.stubs(:repo).returns(grit_repo)
     git_fix_cache.stubs(:cache).returns(Bugwatch::FixCache.new(10))
     grit_commit.stubs(:extend).with(CommitFu::FlogCommit)
