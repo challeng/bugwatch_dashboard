@@ -20,7 +20,7 @@ module CommitFu
 
     def scores(diffs_to_score=ruby_diffs)
       @scores ||= diffs_to_score.map do |diff|
-        [diff_filename(diff), *diff_score(diff).map{|score| score || 0.0 }]
+        [diff_filename(diff), *diff_score(diff)]
       end
     end
 
@@ -35,9 +35,11 @@ module CommitFu
     end
 
     def score(code)
-      flog.reset
-      flog.flog(code)
-      flog.total
+      with_retry(NoMethodError) do
+        flog.reset
+        flog.flog(code)
+        flog.total
+      end
     rescue Racc::ParseError, SyntaxError
       nil
     end
@@ -56,6 +58,16 @@ module CommitFu
         after_score - before_score
       else
         0.0
+      end
+    end
+
+    def with_retry(exception, &block)
+      retry_count = 0
+      begin
+        block.call
+      rescue exception
+        retry_count += 1
+        retry unless retry_count > 1
       end
     end
 
