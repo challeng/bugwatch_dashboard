@@ -13,7 +13,7 @@
     <p>Accumulated complexity: <%= @commit.complexity %></p>
     </div>
     <div class="well">
-      <%= render "commit_complexity_chart", :commit_scores => @commit.accumulated_commit_scores %>
+      <%= render "commit_complexity_chart", :commit_scores => @commit.accumulated_commit_scores, :repo => @repo %>
     </div>
 </div>
 
