@@ -39,7 +39,7 @@ class TagsControllerTest < ActionController::TestCase
   test "GET#diff gets tag_a and tag_b and commits between them" do
     tag3 = stub("Grit::Tag3", :name => "tag3", :commit => stub(:committed_date => Date.today))
     grit_repo.stubs(:tags).returns([tag, tag2, tag3])
-    get :diff, :repo_id => repo.id, :id => "tag1", :diff_id => "tag3"
+    get :diff, :repo_id => repo.id, :tag_a => "tag1", :tag_b => "tag3", :format => :js
     assert_equal tag, assigns(:tag_a)
     assert_equal tag3, assigns(:tag_b)
   end
@@ -47,7 +47,7 @@ class TagsControllerTest < ActionController::TestCase
   test "GET#diff gets commits between tags" do
     commit = Commit.create!(:sha => "123456", :date => DateTime.new(2000, 10, 11), :complexity => 0.0)
     grit_repo.stubs(:tags).returns([tag, tag2])
-    get :diff, :repo_id => repo.id, :id => "tag1", :diff_id => "tag2"
+    get :diff, :repo_id => repo.id, :tag_a => "tag1", :tag_b => "tag2", :format => :js
     assert_equal [commit], assigns(:commits)
   end
 

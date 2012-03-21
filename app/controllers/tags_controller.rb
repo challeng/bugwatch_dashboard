@@ -10,8 +10,8 @@ class TagsController < ApplicationController
   end
 
   def diff
-    @tag_a = get_tag(params[:id])
-    @tag_b = get_tag(params[:diff_id])
+    @tag_a = get_tag(params[:tag_a])
+    @tag_b = get_tag(params[:tag_b])
     @commits = Commit.where("date BETWEEN ? AND ?", @tag_a.commit.committed_date, @tag_b.commit.committed_date)
   end
 

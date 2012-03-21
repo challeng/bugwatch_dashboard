@@ -1,0 +1,6 @@
+<div class="well">
+<p>Total accumulated complexity: <%= commits.sum(:complexity) %></p>
+<p>Commit count: <%= commits.count %></p>
+
+<%= render 'repos/complexity_chart', :commits => commits, :repo => repo %>
+</div>

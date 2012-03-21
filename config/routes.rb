@@ -8,10 +8,9 @@ BugwatchDashboard::Application.routes.draw do
   resource :sessions
   resources :repos do
     resources :alerts
-    resources :tags do
-      member do
-        match '/diff/:diff_id' => :diff, :as => :diff
-      end
+    resources :tags, :only => [:index, :show]
+    controller :tags do
+      post :diff
     end
     member do
       match '/commit/:sha' => :commit, :as => :commit

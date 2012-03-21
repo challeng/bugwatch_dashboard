@@ -1,6 +1,0 @@
-<div class="well">
-    <h2>Diff other tags</h2>
-    <% @tags.reject{|tag| tag == @tag}.each do |tag| %>
-        <p><%= link_to tag.name, diff_repo_tag_path(@repo.id, @tag.name, tag.name) %></p>
-    <% end %>
-</div>
