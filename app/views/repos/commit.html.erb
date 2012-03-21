@@ -1,32 +1,44 @@
-<div class="well">
-<h2>Commit: <%= @commit.sha %></h2>
-<p>Message: <%= @commit.message %></p>
-<p>Date: <%= @commit.date %></p>
-<p>Accumulated complexity: <%= @commit.complexity %></p>
+<ul class="nav nav-tabs">
+  <li><a href="#commit" data-toggle="tab">Commit Details</a></li>
+  <li><a href="#alerts" data-toggle="tab">Alerts</a></li>
+  <li><a href="#diff" data-toggle="tab">Diff</a></li>
+</ul>
+
+<div class="tab-content">
+  <div class="tab-pane active" id="commit">
+    <div class="well">
+    <h2>Commit: <%= @commit.sha %></h2>
+    <p>Message: <%= @commit.message %></p>
+    <p>Date: <%= @commit.date %></p>
+    <p>Accumulated complexity: <%= @commit.complexity %></p>
+    </div>
+    <div class="well">
+      <%= render "commit_complexity_chart", :commit_scores => @commit.accumulated_commit_scores %>
+    </div>
 </div>
 
-<div class="well">
-  <h3>Alerts</h3>
-  <ol>
-  <% @commit.alerts.each do |alert| %>
-  <li>
-    <%= render "alerts/alert", :alert => alert %>
-  </li>
-  <% end %>
-  </ol>
-</div>
-
-<div class="well">
-  <%= render "commit_complexity_chart", :commit_scores => @commit.accumulated_commit_scores %>
-</div>
-
-<div class="well">
-  <h2>Diff</h2>
-  <div class="code">
-  <% @commit.diffs.each do |diff| %>
-      <% diff.split("\n").each do |diff_line| %>
-         <p><%= diff_line %></p>
+<div class="tab-pane" id="alerts">
+    <div class="well">
+      <h3>Alerts</h3>
+      <ol>
+      <% @commit.alerts.each do |alert| %>
+      <li>
+        <%= render "alerts/alert", :alert => alert %>
+      </li>
       <% end %>
-  <% end %>
-  </div>
+      </ol>
+    </div>
+</div>
+
+<div class="tab-pane" id="diff">
+      <h2>Diff</h2>
+      <code>
+      <% @commit.diffs.each do |diff| %>
+          <% diff.split("\n").each do |diff_line| %>
+             <p><%= diff_line %></p>
+          <% end %>
+      <% end %>
+      </code>
+</div>
+
 </div>
