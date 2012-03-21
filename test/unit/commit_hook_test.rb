@@ -14,8 +14,8 @@ class CommitHookTests < Test::Unit::TestCase
     {:name => 'test_repo', :url => 'path/to/repo'}
   end
 
-  def get_payload(commit_params, repository_params=repo_params)
-    {:payload => JSON.dump(:repository => repository_params, :commits => commit_params)}
+  def get_payload(commit_params, repository_params=repo_params, ref="refs/heads/master")
+    {:payload => JSON.dump(:repository => repository_params, :commits => commit_params, :ref => ref)}
   end
 
   test "POST /hook enqueues analysis worker for commit" do
@@ -32,6 +32,12 @@ class CommitHookTests < Test::Unit::TestCase
     Resque::Job.expects(:create).
         with(repo_params[:name].to_sym, CommitAnalysisWorker, repo_params[:name], repo_params[:url], 'ZZZ')
     post '/hook', get_payload(commit_params)
+  end
+
+  test "POST /hook does not enqueue if ref is not master" do
+    payload = get_payload([:id => 'XXX'], repo_params, "refs/heads/not_master")
+    Resque::Job.expects(:create).never
+    post '/hook', payload
   end
 
 end

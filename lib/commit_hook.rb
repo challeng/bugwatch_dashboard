@@ -6,9 +6,11 @@ class CommitHook < Sinatra::Base
     payload = JSON.parse(params['payload'])
     repository = payload['repository']
     commits = payload['commits']
-    commits.each do |commit|
-      Resque::Job.create(repository['name'].to_sym, CommitAnalysisWorker,
-                         repository['name'], repository['url'], commit['id'])
+    if payload['ref'] == "refs/heads/master"
+      commits.each do |commit|
+        Resque::Job.create(repository['name'].to_sym, CommitAnalysisWorker,
+                           repository['name'], repository['url'], commit['id'])
+      end
     end
     "OK"
   end
