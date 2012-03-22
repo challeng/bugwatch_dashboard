@@ -1,4 +1,5 @@
 require 'grit'
+require 'uri'
 
 class Repo < ActiveRecord::Base
 
@@ -37,9 +38,18 @@ class Repo < ActiveRecord::Base
   end
 
   def get_prepared_git_fix_cache
-    fix_cache = Bugwatch::GitFixCache.new(self.name, self.url)
+    fix_cache = Bugwatch::GitFixCache.new(self.name, url_for_protocol)
     fix_cache.caching_strategy = ActiveRecordCache.new(self)
     fix_cache
+  end
+
+  def url_for_protocol
+    uri = URI(self.url)
+    if AppConfig.git_domains.include?(uri.host)
+      "#{uri.host}:#{uri.path}.git"
+    else
+      self.url
+    end
   end
 
 end
