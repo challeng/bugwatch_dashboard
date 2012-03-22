@@ -49,7 +49,7 @@ class PostReceive
 end
 
 
-if $0 == _FILE_
+if $0 == __FILE__
  hook_url = nil
  raise Exception, "need to supply a hook url" unless hook_url
  PostReceive.post(STDIN.read, hook_url)
