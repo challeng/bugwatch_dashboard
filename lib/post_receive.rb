@@ -8,7 +8,7 @@ class PostReceive
 
     def payload(input)
       old_revision, new_revision, ref = input.split(" ")
-      revisions = Kernel.system("git rev-list --first-parent #{new_revision}")
+      revisions = `git rev-list --first-parent #{new_revision}`
       new_revisions = revisions.split("\n").take_while {|rev| rev != old_revision }.reverse
 
       {

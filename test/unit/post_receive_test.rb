@@ -17,19 +17,19 @@ class PostReceiveTest < ActiveSupport::TestCase
 
   test "#payload returns payload with single commit" do
     input = "AAA XXX #{master_ref}"
-    Kernel.expects(:system).with(rev_list("XXX")).returns(%w(XXX AAA).join("\n"))
+    PostReceive.expects(:'`').with(rev_list("XXX")).returns(%w(XXX AAA).join("\n"))
     assert_equal [{:id => "XXX"}], PostReceive.payload(input)[:commits]
   end
 
   test "#payload returns payload with multiple commits" do
     input = "AAA YYY #{master_ref}"
-    Kernel.expects(:system).with(rev_list("YYY")).returns(%w(YYY XXX AAA).join("\n"))
+    PostReceive.expects(:'`').with(rev_list("YYY")).returns(%w(YYY XXX AAA).join("\n"))
     assert_equal [{:id => "XXX"}, {:id => "YYY"}], PostReceive.payload(input)[:commits]
   end
 
   test "#payload returns payload with all revisions if old revision is all zeros" do
     input = "0000000000000000000000000000000000000000 YYY #{master_ref}"
-    Kernel.expects(:system).with(rev_list("YYY")).returns(%w(YYY XXX).join("\n"))
+    PostReceive.expects(:'`').with(rev_list("YYY")).returns(%w(YYY XXX).join("\n"))
     assert_equal [{:id => "XXX"}, {:id => "YYY"}], PostReceive.payload(input)[:commits]
   end
 
