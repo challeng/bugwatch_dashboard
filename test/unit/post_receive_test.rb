@@ -35,13 +35,13 @@ class PostReceiveTest < ActiveSupport::TestCase
 
   test "#payload returns ref" do
     input = "AAA YYY #{master_ref}"
-    Kernel.stubs(:system).returns([])
+    PostReceive.stubs(:'`').returns([])
     assert_equal master_ref, PostReceive.payload(input)[:ref]
   end
 
   test "#payload returns repo url and name" do
     input = "AAA YYY #{master_ref}"
-    Kernel.stubs(:system).returns([])
+    PostReceive.stubs(:'`').returns([])
     expected = {:name => "test_repo", :url => "git:test_repo.git"}
     assert_equal expected, PostReceive.payload(input)[:repository]
   end
