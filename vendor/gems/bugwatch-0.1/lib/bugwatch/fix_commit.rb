@@ -2,6 +2,8 @@ module Bugwatch
 
   class FixCommit
 
+    include FileHelper
+
     attr_reader :commit
 
     def initialize(commit)
@@ -37,7 +39,7 @@ module Bugwatch
     end
 
     def ruby_files
-      files.select { |file| file.match(/\.rb$/) && !file.match(/^spec\//) }
+      files.select { |file| ruby_file?(file) }
     end
 
     def keywords_in_commit_message?

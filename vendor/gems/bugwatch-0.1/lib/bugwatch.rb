@@ -1,3 +1,4 @@
+require File.expand_path('../bugwatch/file_helper', __FILE__)
 require File.expand_path('../bugwatch/bug_fix', __FILE__)
 require File.expand_path('../bugwatch/fix_commit', __FILE__)
 require File.expand_path('../bugwatch/hot_spot', __FILE__)

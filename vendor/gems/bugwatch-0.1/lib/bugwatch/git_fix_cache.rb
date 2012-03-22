@@ -2,6 +2,8 @@ module Bugwatch
 
   class GitFixCache
 
+    include FileHelper
+
     REPOS_DIR = "repos"
     COMMIT_CHUNK_SIZE = 200
 
@@ -140,10 +142,6 @@ module Bugwatch
 
     def bug_fixes_in_cache
       cache.cache.values.flatten
-    end
-
-    def ruby_file?(file)
-      file.match(/\.rb$/) && !file.match(/_spec|_steps\.rb$/)
     end
 
   end

@@ -23,6 +23,7 @@ Gem::Specification.new do |s|
     lib/bugwatch.rb
     lib/bugwatch/bug_fix.rb
     lib/bugwatch/diff_parser.rb
+    lib/bugwatch/file_helper.rb
     lib/bugwatch/fix_cache.rb
     lib/bugwatch/fix_commit.rb
     lib/bugwatch/git_fix_cache.rb
