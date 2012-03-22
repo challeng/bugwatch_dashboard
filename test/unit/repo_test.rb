@@ -6,17 +6,6 @@ class RepoTest < ActiveSupport::TestCase
     @sut ||= Repo.new(:name => "test_repo", :url => "/path/to/repo")
   end
 
-  test "after_create clone repo" do
-    Kernel.expects(:system).with("mkdir repos; cd repos; git clone #{sut.url}")
-    sut.save
-  end
-
-  test "#repo returns grit repo" do
-    grit_repository = stub("Grit::Repo")
-    Grit::Repo.expects(:new).with("repos/#{sut.name}").returns(grit_repository)
-    assert_equal grit_repository, sut.repo
-  end
-
   test "#git_fix_cache creates GitFixCache with name and url" do
     git_fix_cache = Bugwatch::GitFixCache.new(sut.name, sut.url)
     Bugwatch::GitFixCache.expects(:new).with(sut.name, sut.url).returns(git_fix_cache)
