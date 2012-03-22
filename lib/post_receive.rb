@@ -1,3 +1,5 @@
+#!/usr/bin/env ruby
+
 require 'net/http'
 require 'json'
 
@@ -36,4 +38,10 @@ class PostReceive
     end
 
   end
+end
+
+if $0 == __FILE__
+  hook_url = nil
+  raise Exception, "need to supply a hook url" unless hook_url
+  PostReceive.post(STDIN.read, hook_url)
 end
