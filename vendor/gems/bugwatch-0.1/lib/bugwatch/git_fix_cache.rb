@@ -27,7 +27,7 @@ module Bugwatch
       unless bug_fixes_in_cache.map(&:sha).include?(commit_sha)
         update_repo
         commit = repo.commit(commit_sha)
-        cache.add(*get_bug_fixes_from_commit(commit))
+        cache.add(*get_bug_fixes_from_commit(commit)) unless merge_commit?(commit)
       end
     end
 

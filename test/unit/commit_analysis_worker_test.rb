@@ -38,7 +38,7 @@ class CommitAnalysisWorkerTest < ActiveSupport::TestCase
 
   def grit_commit
     @grit_commit ||= stub(:committer => stub(:name => user.name, :email => user.email), :short_message => "test",
-                          :sha => commit.sha, :total_score => 5.0, :committed_date => '2010-10-10')
+                          :sha => commit.sha, :total_score => 5.0, :committed_date => '2010-10-10', :parents => [1])
   end
 
   def subscription
