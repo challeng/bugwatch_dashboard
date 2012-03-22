@@ -3,8 +3,8 @@ require 'uri'
 
 class Repo < ActiveRecord::Base
 
-  has_many :commits
-  has_many :subscriptions
+  has_many :commits, :dependent => :destroy
+  has_many :subscriptions, :dependent => :destroy
   has_many :users, :through => :subscriptions
   has_many :alerts, :through => :commits
   has_many :bug_fixes, :through => :commits

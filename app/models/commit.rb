@@ -2,8 +2,8 @@ require 'active_record_cache'
 
 class Commit < ActiveRecord::Base
 
-  has_many :bug_fixes
-  has_many :alerts
+  has_many :bug_fixes, :dependent => :destroy
+  has_many :alerts, :dependent => :destroy
   belongs_to :repo
   belongs_to :user
 
