@@ -9,7 +9,7 @@ class Commit < ActiveRecord::Base
 
   def accumulated_commit_scores
     grit.scores.map do |(file_name, before_score, after_score)|
-      [file_name, after_score - before_score]
+      [file_name, get_accumulated_score(after_score, before_score)]
     end
   end
 
@@ -22,6 +22,14 @@ class Commit < ActiveRecord::Base
   end
 
   private
+
+  def get_accumulated_score(after_score, before_score)
+    if before_score && after_score
+      after_score - before_score
+    else
+      0.0
+    end
+  end
 
   def grit
     grit_commit = self.repo.grit.commit(self.sha)
