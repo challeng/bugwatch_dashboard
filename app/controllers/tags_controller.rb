@@ -6,18 +6,18 @@ class TagsController < ApplicationController
   end
 
   def show
-    @tag = get_tag(params[:id])
+    @tag = find_tag(params[:id])
   end
 
   def diff
-    @tag_a = get_tag(params[:tag_a])
-    @tag_b = get_tag(params[:tag_b])
+    @tag_a = find_tag(params[:tag_a])
+    @tag_b = find_tag(params[:tag_b])
     @commits = Commit.where("date BETWEEN ? AND ?", @tag_a.commit.committed_date, @tag_b.commit.committed_date)
   end
 
   private
 
-  def get_tag(tag_name)
+  def find_tag(tag_name)
     @tags.find{|tag| tag.name == tag_name}
   end
 

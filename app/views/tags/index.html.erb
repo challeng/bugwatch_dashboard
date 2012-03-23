@@ -1,6 +1,6 @@
 <%= form_tag repo_diff_path(@repo.id), :remote => true do %>
-    <%= select_tag("tag_a", options_from_collection_for_select(@tags, 'name', 'name'), :class => "chosen") %>
-    <%= select_tag("tag_b", options_from_collection_for_select(@tags, 'name', 'name'), :class => "chosen") %>
+    <%= select_tag("tag_a", options_from_collection_for_select(tags_by_date(@tags), 'name', 'name'), :class => "chosen") %>
+    <%= select_tag("tag_b", options_from_collection_for_select(tags_by_date(@tags), 'name', 'name'), :class => "chosen") %>
     <%= submit_tag "View diff", :id => "submit_diff", :class => "btn" %>
 <% end %>
 
