@@ -1,4 +1,10 @@
-Welcome to bugwatch!
+Hello, <%= @user.name %>
+
+Welcome to Bugwatch! Bugwatch is a metrics dashboard that provides you with real time updates to repositories you commit to.
+
+The main goal of Bugwatch is to let you know if you are changing a potentially dangerous component of the system. This email does not mean you are in trouble, however you should check out the alert(s) generated and make sure your changes don't affect the health of the system.
+
+The following alerts have been generated:
 
 <% @presenter.files.each do |file, klasses| %>
   <%= file %>
