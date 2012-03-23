@@ -17,7 +17,7 @@ ActionMailer::Base.smtp_settings = {
   :port                 => 587,
   :domain               => AppConfig.mailer[:domain],
   :user_name            => AppConfig.mailer[:user_name],
-  :password             => Base64.decode64(AppConfig.mailer[:password]),
+  :password             => Base64.decode64(AppConfig.mailer[:password] || ""),
   :authentication       => "plain",
   :enable_starttls_auto => true
 }
