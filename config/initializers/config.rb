@@ -11,3 +11,15 @@ end
 
 AppConfig.mailer = get_config("mailer.yml", {})
 AppConfig.git_domains = get_config("git_domains.yml", [])
+
+ActionMailer::Base.smtp_settings = {
+  :address              => "smtp.gmail.com",
+  :port                 => 587,
+  :domain               => AppConfig.mailer[:domain],
+  :user_name            => AppConfig.mailer[:user_name],
+  :password             => Base64.decode64(AppConfig.mailer[:password]),
+  :authentication       => "plain",
+  :enable_starttls_auto => true
+}
+
+ActionMailer::Base.default_url_options[:host] = AppConfig.mailer[:host]
