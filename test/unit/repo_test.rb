@@ -25,7 +25,7 @@ class RepoTest < ActiveSupport::TestCase
 
   test "#git_fix_cache creates GitFixCache with protocolized url if rule matches domain" do
     AppConfig.stubs(:git_domains).returns(['domain'])
-    Bugwatch::GitFixCache.expects(:new).with(sut.name, "domain:/path/to/repo.git").returns(git_fix_cache)
+    Bugwatch::GitFixCache.expects(:new).with(sut.name, "domain:/path/to/repo").returns(git_fix_cache)
     sut.git_fix_cache
   end
 

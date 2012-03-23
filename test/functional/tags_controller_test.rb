@@ -13,12 +13,12 @@ class TagsControllerTest < ActionController::TestCase
 
   def tag
     grit_commit = stub("Grit::Commit", :committed_date => DateTime.new(2000, 10, 10))
-    @tag ||= stub("Grit::Tag", :name => "tag1", :commit => grit_commit)
+    @tag ||= stub("Grit::Tag", :name => "tag1", :commit => grit_commit, :tag_date => Time.new)
   end
 
   def tag2
     grit_commit2 = stub("Grit::Commit", :committed_date => DateTime.new(2000, 10, 12))
-    @tag2 ||= stub("Grit::Tag", :name => "tag2", :commit => grit_commit2)
+    @tag2 ||= stub("Grit::Tag", :name => "tag2", :commit => grit_commit2, :tag_date => Time.new)
   end
 
   test "GET#index gets all tags for repo" do
