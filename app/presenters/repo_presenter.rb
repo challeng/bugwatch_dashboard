@@ -11,7 +11,7 @@ class RepoPresenter
   end
 
   def cache_count
-    @repo.git_fix_cache.cache.cache.count
+    @repo.fix_cache.cache.count
   end
 
   def last_updated

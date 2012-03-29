@@ -9,13 +9,15 @@ class ReposControllerTest < ActionController::TestCase
   attr_reader :user, :repo, :subscription, :commit
 
   def setup
-    logged_in!
-    Repo.any_instance.stubs(:git_fix_cache).returns(stub(:cache => Bugwatch::FixCache.new(10)))
-    Commit.any_instance.stubs(:grit).returns(grit_commit)
     @user = users(:test_user)
     @repo = repos(:test_repo)
     @subscription = subscriptions(:test_subscription)
     @commit = commits(:test_commit)
+    Repo.any_instance.stubs(:git_analyzer).returns(stub(:cache => Bugwatch::FixCache.new(10)))
+    Repo.any_instance.stubs(:fix_cache).returns(stub(:cache => {}))
+    Commit.any_instance.stubs(:grit).returns(grit_commit)
+    Repo.any_instance.stubs(:hot_spots).returns([])
+    logged_in!
   end
 
   test "GET#index retrieves all repos for user" do

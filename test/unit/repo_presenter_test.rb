@@ -19,8 +19,8 @@ class RepoPresenterTest < ActiveSupport::TestCase
   end
 
   test "#cache_count gets count of files in fixcache" do
-    git_fix_cache = stub(:cache => stub(:cache => {"file1.rb" => [], "file2.rb" => []}))
-    repo.stubs(:git_fix_cache).returns(git_fix_cache)
+    fix_cache = stub(:cache => {"file1.rb" => [], "file2.rb" => []})
+    repo.stubs(:fix_cache).returns(fix_cache)
     assert_equal 2, sut.cache_count
   end
 

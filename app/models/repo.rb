@@ -11,12 +11,16 @@ class Repo < ActiveRecord::Base
 
   REPO_DIR = "repos"
 
-  def git_fix_cache
-    @git_fix_cache ||= get_prepared_git_fix_cache
+  def git_analyzer
+    @git_fix_cache ||= get_prepared_git_analyzer
   end
 
   def hot_spots
-    self.git_fix_cache.cache.hot_spots
+    self.fix_cache.hot_spots
+  end
+
+  def fix_cache
+    @fix_cache ||= Bugwatch::FixCacheAnalyzer.new(grit, self.bug_fixes.map(&:bugwatch)).cache
   end
 
   def tags
@@ -24,7 +28,7 @@ class Repo < ActiveRecord::Base
   end
 
   def grit
-    @grit ||= Grit::Repo.new(path)
+    Grit::Repo.new(path)
   end
 
   def path
@@ -33,12 +37,8 @@ class Repo < ActiveRecord::Base
 
   private
 
-  def get_grit_repo
-    Grit::Repo.new(path)
-  end
-
-  def get_prepared_git_fix_cache
-    fix_cache = Bugwatch::GitFixCache.new(self.name, url_for_protocol)
+  def get_prepared_git_analyzer
+    fix_cache = Bugwatch::GitAnalyzer.new(self.name, url_for_protocol)
     fix_cache.caching_strategy = ActiveRecordCache.new(self)
     fix_cache
   end

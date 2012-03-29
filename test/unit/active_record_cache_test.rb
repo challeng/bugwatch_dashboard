@@ -36,4 +36,15 @@ class ActiveRecordCacheTests < ActiveSupport::TestCase
     assert_equal [:bugwatch_bugfix], sut.retrieve
   end
 
+  test "#commit_exist? returns commit if commit record exists for repo" do
+    commit = commits(:test_commit)
+    assert_equal commit, sut.commit_exists?(commit.sha)
+  end
+
+  test "#commit_exist? returns nil if commit record does not exist for repo" do
+    commit = commits(:test_commit)
+    commit.update_attribute(:repo, nil)
+    assert_nil sut.commit_exists? commit.sha
+  end
+
 end

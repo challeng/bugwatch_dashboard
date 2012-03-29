@@ -1,5 +1,6 @@
 require 'grit'
 require 'active_record_cache'
+require 'commit_analyzer'
 
 class CommitAnalysisWorker
   class << self
@@ -8,28 +9,18 @@ class CommitAnalysisWorker
       Grit::Git.git_timeout = 1000000000
       Grit::Git.git_max_size = 1000000000
       repo = Repo.find_or_create_by_name_and_url(repo_name, repo_url)
-      fix_cache = repo.git_fix_cache
-      fix_cache.on_commit = method(:create_and_associate).to_proc.curry[repo]
-      fix_cache.add(commit_sha)
+      git_analyzer = repo.git_analyzer
+      fix_cache_analyzer = Bugwatch::FixCacheAnalyzer.new(git_analyzer.repo, repo.bug_fixes)
+      git_analyzer.on_commit << CommitAnalyzer.new(repo)
+      git_analyzer.on_commit << fix_cache_analyzer
+      git_analyzer.add(commit_sha)
       commit = Commit.find_by_sha_and_repo_id(commit_sha, repo.id)
-      deliver_alerts(commit, fix_cache)
+      deliver_alerts(commit, fix_cache_analyzer)
     rescue ActiveRecord::StatementInvalid => e
       Rails.logger.error e
     end
 
     private
-
-    def create_and_associate(repo, grit_commit, bug_fixes)
-      grit_commit.extend(CommitFu::FlogCommit)
-      user = User.find_or_create_by_email(:email => grit_commit.committer.email, :name => grit_commit.committer.name)
-      commit = Commit.find_or_create_by_sha_and_repo_id(grit_commit.sha, repo.id, :user => user,
-                                          :complexity => grit_commit.total_score, :date => grit_commit.committed_date)
-      bug_fixes.each do |bug_fix|
-        BugFix.find_or_create_by_file_and_klass_and_function_and_commit_id(
-            bug_fix.file, bug_fix.klass, bug_fix.function, commit.id, :date_fixed => bug_fix.date)
-      end
-      Subscription.find_or_create_by_repo_id_and_user_id(repo.id, user.id)
-    end
 
     def deliver_alerts(commit, fix_cache)
       existing_alerts = commit.user.alerts.any?
