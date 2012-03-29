@@ -7,18 +7,28 @@ module Bugwatch
       @repo_name = repo_name
     end
 
-    def store(bug_fixes)
-      File.open(path_to_cache, 'w') {|f| f.write(JSON.dump(bug_fixes.map(&:to_json))) }
+    def store(commit)
+      File.open(path_to_cache, 'w') {|f| f.write(JSON.dump(cache_json.merge({commit.sha => commit.fixes.map(&:to_json)}))) }
     end
 
     def cache_exists?
       File.exists?(path_to_cache)
     end
 
+    def commit_exists?(commit_sha)
+      cache_json.keys.include? commit_sha
+    end
+
     def retrieve
-      JSON.parse(File.read(path_to_cache)).map do |bug_fix_metadata|
-        BugFix.new(bug_fix_metadata)
+      cache_json.flat_map do |(commit_sha, bug_fix_metadata)|
+        bug_fix_metadata.map {|data| BugFix.new(data.merge('sha' => commit_sha)) }
       end
+    end
+
+    private
+
+    def cache_json
+      JSON.parse(File.read(path_to_cache))
     end
 
     def path_to_cache
