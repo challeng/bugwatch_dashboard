@@ -47,8 +47,7 @@ module Bugwatch
         commit_count = repo.commit_count
         catch :done do
           reverse_offset(commit_count) do |offset|
-            p offset
-            repo.commits('master', COMMIT_CHUNK_SIZE, offset).each do |commit|
+            repo.commits('master', COMMIT_CHUNK_SIZE, offset).reverse.each do |commit|
               y << commit
               throw :done if commit.sha == new_commit.sha
             end
