@@ -44,7 +44,7 @@ class Repo < ActiveRecord::Base
   end
 
   def url_for_protocol
-    uri = URI(self.url)
+    uri = URI(self.url.gsub("git@", ""))
     if AppConfig.git_domains.include?(uri.host)
       "#{uri.host}:#{uri.path}"
     else
