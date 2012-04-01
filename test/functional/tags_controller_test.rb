@@ -12,7 +12,7 @@ class TagsControllerTest < ActionController::TestCase
   end
 
   def tag
-    grit_commit = stub("Grit::Commit", :committed_date => DateTime.new(2000, 10, 10))
+    grit_commit = stub("Grit::Commit", :committed_date => DateTime.new(2000, 10, 10), :authored_date => DateTime.new(2000, 10, 10))
     @tag ||= stub("Grit::Tag", :name => "tag1", :commit => grit_commit, :tag_date => Time.new)
   end
 

@@ -27,9 +27,9 @@ class CommitAnalysisWorker
       alerts = create_alerts(commit, fix_cache)
       if send_alert?(alerts, commit)
         if existing_alerts
-          NotificationMailer.alert(alerts, commit.user).deliver
+          NotificationMailer.alert(alerts, commit).deliver
         else
-          NotificationMailer.welcome(alerts, commit.user).deliver
+          NotificationMailer.welcome(alerts, commit).deliver
         end
       end
     end

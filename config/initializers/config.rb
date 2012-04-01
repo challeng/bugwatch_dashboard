@@ -22,4 +22,4 @@ ActionMailer::Base.smtp_settings = {
   :enable_starttls_auto => true
 }
 
-ActionMailer::Base.default_url_options[:host] = AppConfig.mailer["host"]
+ActionMailer::Base.default_url_options[:host] = AppConfig.mailer["host"] || "localhost:3000"

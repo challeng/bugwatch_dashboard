@@ -2,16 +2,18 @@ class NotificationMailer < ActionMailer::Base
 
   default :from => AppConfig.mailer['from']
 
-  def alert(alerts, user, options={})
+  def alert(alerts, commit, options={})
     @presenter = AlertNotificationPresenter.new(alerts)
-    @user = user
-    mail(:subject => "Bugwatch Alert", :to => user.email)
+    @user = commit.user
+    @repo = commit.repo
+    mail(:subject => "Bugwatch Alert", :to => @user.email)
   end
 
-  def welcome(alerts, user)
+  def welcome(alerts, commit)
     @presenter = AlertNotificationPresenter.new(alerts)
-    @user = user
-    mail(:to => user.email, :subject => "Welcome to Bugwatch")
+    @user = commit.user
+    @repo = commit.repo
+    mail(:to => @user.email, :subject => "Welcome to Bugwatch")
   end
 
 end

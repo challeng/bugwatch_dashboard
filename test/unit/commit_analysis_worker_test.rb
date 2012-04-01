@@ -34,7 +34,6 @@ class CommitAnalysisWorkerTest < ActiveSupport::TestCase
     @sut = CommitAnalysisWorker
     @repo_name = "test_repo"
     @repo_url = "path/to/repo"
-    @commit = commits(:test_commit)
     @git_analyzer = Bugwatch::GitAnalyzer.new(repo.name, repo.url)
     @fix_cache_analyzer = Bugwatch::FixCacheAnalyzer.new(grit_repo, [])
 
@@ -127,7 +126,7 @@ class CommitAnalysisWorkerTest < ActiveSupport::TestCase
     fix_cache_analyzer.expects(:alerts).with(commit.sha).returns([bug_fix, bug_fix2])
     Alert.stubs(:create).with(:commit => commit, :file => 'file.rb', :klass => 'Class', :function => 'function').returns(alert)
     Alert.stubs(:create).with(:commit => commit, :file => 'file2.rb', :klass => 'Test', :function => 'function').returns(alert2)
-    NotificationMailer.expects(:alert).with([alert, alert2], user).returns(mailer)
+    NotificationMailer.expects(:alert).with([alert, alert2], commit).returns(mailer)
     mailer.expects(:deliver)
     sut.perform(repo_name, repo_url, commit.sha)
   end
@@ -150,7 +149,7 @@ class CommitAnalysisWorkerTest < ActiveSupport::TestCase
     Alert.stubs(:create).returns(alert)
     mailer = stub
     fix_cache_analyzer.expects(:alerts).with(commit.sha).returns([bug_fix])
-    NotificationMailer.expects(:welcome).with([alert], user).returns(mailer)
+    NotificationMailer.expects(:welcome).with([alert], commit).returns(mailer)
     mailer.expects(:deliver)
     sut.perform(repo_name, repo_url, commit.sha)
   end
