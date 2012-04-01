@@ -44,10 +44,9 @@ module Bugwatch
 
     def mine_for_commits(new_commit)
       Enumerator.new do |y|
-        commit_count = repo.commit_count
         catch :done do
-          reverse_offset(commit_count) do |offset|
-            repo.commits('master', COMMIT_CHUNK_SIZE, offset).reverse.each do |commit|
+          reverse_offset(repo.commit_count) do |offset|
+            repo.commits('master', COMMIT_CHUNK_SIZE, offset).each do |commit|
               y << commit
               throw :done if commit.sha == new_commit.sha
             end

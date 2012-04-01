@@ -1,4 +1,4 @@
-require 'time'
+require 'date'
 require 'active_support/hash_with_indifferent_access'
 
 module Bugwatch
@@ -18,14 +18,14 @@ module Bugwatch
 
     def date
       if @date.is_a?(String)
-        Time.parse(@date)
+        DateTime.parse(@date)
       else
         @date
       end
     end
 
     def score
-      relevance = 1 - ((Time.now - self.date).to_f / Time.now.to_f)
+      relevance = 1 - ((DateTime.now - self.date).to_f / Time.now.to_f)
       (1 / (1 + Math.exp((-12 * relevance) + 12)))
     end
 
