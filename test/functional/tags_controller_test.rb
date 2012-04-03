@@ -45,7 +45,7 @@ class TagsControllerTest < ActionController::TestCase
   end
 
   test "GET#diff gets commits between tags" do
-    commit = Commit.create!(:sha => "123456", :date => DateTime.new(2000, 10, 11), :complexity => 0.0)
+    commit = Commit.create!(:sha => "123456", :date => DateTime.new(2000, 10, 11), :complexity => 0.0, :repo => repo)
     grit_repo.stubs(:tags).returns([tag, tag2])
     get :diff, :repo_id => repo.id, :tag_a => "tag1", :tag_b => "tag2", :format => :js
     assert_equal [commit], assigns(:commits)
