@@ -20,8 +20,8 @@ module ReposHelper
   end
 
   def graph_size(bar_count)
-    min = 200
-    bar_count > 600 ? bar_count * 6 : min
+    min = 600
+    bar_count > min ? bar_count * 6 : min
   end
 
 end
