@@ -1,3 +1,6 @@
+require 'grit'
+require 'rugged'
+
 module Bugwatch
 
   class GitAnalyzer
@@ -5,7 +8,6 @@ module Bugwatch
     include FileHelper
 
     REPOS_DIR = "repos"
-    COMMIT_CHUNK_SIZE = 200
 
     attr_writer :caching_strategy
     attr_reader :on_commit
@@ -23,8 +25,7 @@ module Bugwatch
     def add(commit_sha)
       unless caching_strategy.commit_exists?(commit_sha)
         update_repo
-        commit = repo.commit(commit_sha)
-        new_commits(commit).each &method(:run_callbacks)
+        new_commits(commit_sha).each &method(:run_callbacks)
       end
     end
 
@@ -34,36 +35,25 @@ module Bugwatch
 
     private
 
-    def new_commits(new_commit)
+    def new_commits(new_commit_sha)
       if caching_strategy.cache_exists?
-        [new_commit]
+        mine_for_commits(new_commit_sha).take(1)
       else
-        mine_for_commits(new_commit)
+        mine_for_commits(new_commit_sha)
       end
     end
 
-    def mine_for_commits(new_commit)
+    def mine_for_commits(new_commit_sha)
       Enumerator.new do |y|
-        catch :done do
-          reverse_offset(repo.commit_count) do |offset|
-            repo.commits('master', COMMIT_CHUNK_SIZE, offset).reverse.each do |commit|
-              y << commit
-              throw :done if commit.sha == new_commit.sha
-            end
-          end
+        rugged_repo.walk(new_commit_sha).each do |rugged_commit|
+          grit_commit = repo.commit(rugged_commit.oid)
+          y << grit_commit
         end
       end
     end
 
-    def reverse_offset(commit_count)
-      ((commit_count / COMMIT_CHUNK_SIZE) + 1).times do |offset|
-        _offset = commit_count - (COMMIT_CHUNK_SIZE * offset)
-        if commit_count < COMMIT_CHUNK_SIZE || _offset < 0
-          yield 0
-        else
-          yield _offset
-        end
-      end
+    def rugged_repo
+      @rugged_repo ||= Rugged::Repository.new(path_to_repo)
     end
 
     def run_callbacks(c)

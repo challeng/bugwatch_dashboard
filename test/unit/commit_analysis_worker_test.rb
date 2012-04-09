@@ -42,11 +42,11 @@ class CommitAnalysisWorkerTest < ActiveSupport::TestCase
         returns(repo)
     Bugwatch::GitAnalyzer.expects(:new).with(repo.name, repo.url).returns(git_analyzer)
     Bugwatch::FixCacheAnalyzer.expects(:new).returns(fix_cache_analyzer)
-    grit_repo.stubs(:commit).with(commit.sha).returns(grit_commit)
     fix_cache_analyzer.stubs(:alerts).returns([])
     fix_cache_analyzer.stubs(:call)
     git_analyzer.stubs(:update_repo)
     git_analyzer.stubs(:repo).returns(grit_repo)
+    git_analyzer.stubs(:mine_for_commits).returns([grit_commit])
     grit_commit.stubs(:extend).with(CommitFu::FlogCommit).returns(grit_commit)
   end
 
