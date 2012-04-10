@@ -19,6 +19,8 @@ module Bugwatch
     def date
       if @date.is_a?(String)
         DateTime.parse(@date)
+      elsif @date.is_a?(Time)
+        DateTime.parse(@date.to_s)
       else
         @date
       end
