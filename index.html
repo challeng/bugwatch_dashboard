@@ -1,0 +1,83 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Bugwatch dashboard by JacobNinja</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/respond.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <!--[if lt IE 8]>
+    <link rel="stylesheet" href="stylesheets/ie.css">
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+  </head>
+  <body>
+
+      <div id="header">
+        <nav>
+          <li class="fork"><a href="https://github.com/JacobNinja/bugwatch_dashboard">Fork On GitHub</a></li>
+          <li class="downloads"><a href="https://github.com/JacobNinja/bugwatch_dashboard/zipball/master">ZIP</a></li>
+          <li class="downloads"><a href="https://github.com/JacobNinja/bugwatch_dashboard/tarball/master">TAR</a></li>
+          <li class="title">DOWNLOADS</li>
+        </nav>
+      </div><!-- end header -->
+
+    <div class="wrapper">
+
+      <section>
+        <div id="title">
+          <h1>Bugwatch dashboard</h1>
+          <p>Real time analytics &amp; more</p>
+          <hr>
+          <span class="credits left">Project maintained by <a href="https://github.com/JacobNinja">JacobNinja</a></span>
+          <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="http://twitter.com/#!/michigangraham">mattgraham</a></span>
+        </div>
+
+        <p>Bugwatch is a git repository analyzer that gives you real time analytics about code complexity and more. </p>
+
+<p><img src="http://img826.imageshack.us/img826/7585/bugwatch.png" alt="Bugwatch Dashboard"></p>
+
+<h2>Track your (ruby) repositories</h2>
+
+<p>The bugwatch_dashboard project is a Rails application that provides a user interface to visualize analyzed commits.
+Once you have the server running, it's easy to install a new repository in a few different ways.</p>
+
+<h3>Via Github</h3>
+
+<p>If your project is already on Github, then all you have to do is set up a <a href="http://help.github.com/post-receive-hooks/">post-receive hook</a>. </p>
+
+<ol>
+<li>Point the post-receive URL at "/hook" as a relative path to your host. eg: <a href="http://example.com/hook">http://example.com/hook</a></li>
+<li>Click "Test Hook" and it will clone and analyze your repository</li>
+</ol><h3>Via Git</h3>
+
+<p>If your project is not on Github, then you can install a post-receive GIT hook on the remote repository.</p>
+
+<ol>
+<li>Make sure json gem is installed at a system level</li>
+<li>Copy "lib/post_receive.rb" contents into git hooks directory as "post-receive". (GIT_DIR/.git/hooks) </li>
+<li>Edit "hook_url" local variable at bottom of post-receive script to point at "/hook" as a relative path to your host. eg: <a href="http://example.com/hook">http://example.com/hook</a></li>
+<li>Wait for a new commit to be pushed to fire off the initial payload to begin analyzing</li>
+</ol><h2>Create your own analyzer</h2>
+
+<p>Bugwatch can be used as a platform for performing different types of analysis on commits. To be fully compliant, an analyzer must respond to "call" and take a single argument, commit, which is an instance of Bugwatch::Commit.</p>
+
+<pre><code>class CommitAnalyzer
+  def self.call(commit)
+    # ... do stuff with commit here
+  end
+end
+</code></pre>
+      </section>
+
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><!--<![endif]-->
+    
+  </body>
+</html>
