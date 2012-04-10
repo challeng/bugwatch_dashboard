@@ -10,7 +10,6 @@ set :application, "bugwatch_dashboard"
 set :scm                  , :git
 set :repository           , "git@github.com:JacobNinja/#{application}.git"
 set :deploy_via           , :remote_cache
-set :git_enable_submodules, 1
 
 set :deploy_to, "/var/groupon/fixcache"
 
