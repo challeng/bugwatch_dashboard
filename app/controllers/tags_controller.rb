@@ -12,7 +12,7 @@ class TagsController < ApplicationController
   def diff
     @tag_a = find_tag(params[:tag_a])
     @tag_b = find_tag(params[:tag_b])
-    @commits = @repo.commits.where("date BETWEEN ? AND ?", @tag_a.commit.committed_date, @tag_b.commit.committed_date)
+    @commits = @repo.commits.where("date BETWEEN ? AND ?", @tag_a.commit.committed_date, @tag_b.commit.committed_date).order("date asc")
   end
 
   private
