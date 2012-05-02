@@ -80,7 +80,7 @@ module Bugwatch
     end
 
     def update_repo
-      Kernel.system("cd #{path_to_repo}; git pull origin master")
+      Kernel.system("cd #{path_to_repo}; git pull origin master; git fetch --tags")
     end
 
   end

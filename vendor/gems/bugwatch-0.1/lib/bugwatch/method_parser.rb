@@ -7,8 +7,6 @@ module Bugwatch
 
     attr_reader :parser, :klasses
 
-    class MethodFound < Exception; end
-
     def initialize(line_range)
       super()
       @line_range = line_range
