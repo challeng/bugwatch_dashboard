@@ -78,4 +78,11 @@ class ReposControllerTest < ActionController::TestCase
     assert_equal [bug_fix], assigns(:related_bug_fixes)
   end
 
+  test "GET#fixcache_graph assigns repo presenter" do
+    presenter = RepoPresenter.new(repo)
+    RepoPresenter.expects(:new).with(repo).returns(presenter)
+    get :fixcache_graph, :id => repo.id
+    assert_equal presenter, assigns(:repo_presenter)
+  end
+
 end

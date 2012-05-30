@@ -1,6 +1,8 @@
 class ReposController < ApplicationController
 
-  before_filter :retrieve_repo, :only => [:show, :commit, :file, :subscription]
+  layout false, :only => [:fixcache_graph]
+
+  before_filter :retrieve_repo, :only => [:show, :commit, :file, :subscription, :fixcache_graph]
 
   def index
     @repos = current_user.repos
@@ -24,6 +26,10 @@ class ReposController < ApplicationController
 
   def subscription
     @subscription = current_user.subscriptions.find_by_repo_id(@repo.id)
+  end
+
+  def fixcache_graph
+    @repo_presenter = RepoPresenter.new(@repo)
   end
 
   private

@@ -16,7 +16,7 @@ class Repo < ActiveRecord::Base
   end
 
   def hot_spots
-    self.fix_cache.hot_spots
+    @hot_spots ||= self.fix_cache.hot_spots
   end
 
   def fix_cache

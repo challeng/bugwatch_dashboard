@@ -15,6 +15,7 @@ BugwatchDashboard::Application.routes.draw do
     member do
       match '/commit/:sha' => :commit, :as => :commit
       match '/file/*filename' => :file, :as => :file
+      match '/fixcache_graph' => :fixcache_graph
       get :subscription
     end
   end
