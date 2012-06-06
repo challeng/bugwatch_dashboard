@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120315235603) do
+ActiveRecord::Schema.define(:version => 20120606172925) do
 
   create_table "alerts", :force => true do |t|
     t.integer  "commit_id"
@@ -36,6 +36,16 @@ ActiveRecord::Schema.define(:version => 20120315235603) do
 
   add_index "bug_fixes", ["commit_id"], :name => "index_bug_fixes_on_commit_id"
 
+  create_table "clues", :force => true do |t|
+    t.integer  "commit_id"
+    t.integer  "mystery_id"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  add_index "clues", ["commit_id"], :name => "index_clues_on_commit_id"
+  add_index "clues", ["mystery_id"], :name => "index_clues_on_mystery_id"
+
   create_table "commits", :force => true do |t|
     t.string   "sha"
     t.integer  "repo_id"
@@ -47,6 +57,21 @@ ActiveRecord::Schema.define(:version => 20120315235603) do
   end
 
   add_index "commits", ["sha"], :name => "index_commits_on_sha", :unique => true
+
+  create_table "defects", :force => true do |t|
+    t.string   "priority"
+    t.string   "title"
+    t.string   "ticket_id"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  create_table "mysteries", :force => true do |t|
+    t.string   "exception_type"
+    t.string   "backtrace"
+    t.datetime "created_at",     :null => false
+    t.datetime "updated_at",     :null => false
+  end
 
   create_table "repos", :force => true do |t|
     t.string   "name"
