@@ -2,10 +2,19 @@ class FileChangeAnalyzer
 
 	def call(commit)
 		file_names = commit.files # array of modified files
-		files_to_email = []
 
-		config_data = YAML.load_file(file_change.yml)
+		config_data_list.each do |config_data|
+			file_change_notifications(file_names, config_data)
+		end
+	end
+
+	def config_data_list
+		Dir["file_changes/*.yml"].map {|file_name| YAML.load_file(file_name) } 
+	end
+
+	def file_change_notifications(file_names, config_data)
 		files_to_watch = config_data['files_to_watch']
+		files_to_email = []
 
 		#loop through each file changed in commit
 		file_names.each do |file_name|
@@ -15,13 +24,10 @@ class FileChangeAnalyzer
 					files_to_email << file_name
 				end
 			end
-
-
 		end
 
 		#send email here
-		NotificationMailer.file_change(files_to_email).deliver
-
+		NotificationMailer.file_change(files_to_email, config_data).deliver
 	end
 
 end

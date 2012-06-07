@@ -18,9 +18,8 @@ class NotificationMailer < ActionMailer::Base
     mail(:to => @user.email, :subject => "Welcome to Bugwatch")
   end
 
-  def file_change(files_to_email)
+  def file_change(files_to_email, config_data)
     @file_names = files_to_email
-    config_data = YAML.load_file(file_change.yml)
     email_addresses = config_data['email_addresses']
 
     email_addresses.each do |email|
