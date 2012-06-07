@@ -9,7 +9,7 @@ class FileChangeAnalyzer
 	end
 
 	def config_data_list
-		Dir["file_changes/*.yml"].map {|file_name| YAML.load_file(file_name) } 
+		Dir["config/file_changes/*.yml"].map {|file_name| YAML.load_file(file_name) } 
 	end
 
 	def file_change_notifications(file_names, config_data)
