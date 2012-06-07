@@ -1,6 +1,6 @@
 class FileChangeAnalyzer
 
-	def self.call(commit)
+	def call(commit)
 		file_names = commit.files # array of modified files
 		files_to_email = []
 		files_we_want = ['campaign.rb']
