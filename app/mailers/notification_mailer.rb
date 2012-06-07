@@ -18,7 +18,7 @@ class NotificationMailer < ActionMailer::Base
 
   def file_change(files_to_email)
     @file_names = files_to_email
-    mail(:to => 'jim.challenger1@gmail.com', :subject => "Files were changed in DWI #{files_to_email.inspect}")
+    mail(:to => 'jim.challenger1@gmail.com', :subject => "Files were changed in the latest push")
     #TODO mail to team
   end
 
