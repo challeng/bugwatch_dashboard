@@ -16,7 +16,8 @@ class NotificationMailer < ActionMailer::Base
     mail(:to => @user.email, :subject => "Welcome to Bugwatch")
   end
 
-  def mail_dwi(files_to_email)
+  def file_change(files_to_email)
+    @file_names = files_to_email
     mail(:to => 'jim.challenger1@gmail.com', :subject => "Files were changed in DWI #{files_to_email.inspect}")
     #TODO mail to team
   end
