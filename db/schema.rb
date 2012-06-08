@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120606172925) do
+ActiveRecord::Schema.define(:version => 20120608210122) do
 
   create_table "alerts", :force => true do |t|
     t.integer  "commit_id"
@@ -64,6 +64,8 @@ ActiveRecord::Schema.define(:version => 20120606172925) do
     t.string   "ticket_id"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
+    t.string   "type"
+    t.integer  "status"
   end
 
   create_table "mysteries", :force => true do |t|
