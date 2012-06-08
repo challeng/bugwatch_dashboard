@@ -11,6 +11,7 @@ end
 
 AppConfig.mailer = get_config("mailer.yml", {})
 AppConfig.git_domains = get_config("git_domains.yml", [])
+AppConfig.file_changes = get_config("file_change.yml", {})
 
 ActionMailer::Base.smtp_settings = {
   :address              => "smtp.gmail.com",
@@ -22,4 +23,4 @@ ActionMailer::Base.smtp_settings = {
   :enable_starttls_auto => true
 }
 
-ActionMailer::Base.default_url_options[:host] = AppConfig.mailer["host"] || "localhost:3000"
+ActionMailer::Base.default_url_options[:host] = AppConfig.mailer["host"] || "localhost:3000`
