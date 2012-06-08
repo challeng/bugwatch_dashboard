@@ -35,10 +35,12 @@ end
 
 gem 'jquery-rails'
 
-group :development, :test do
+group :test do
   gem 'test-unit'
   gem 'mocha'
   gem 'ruby-prof'
+  gem 'cucumber-rails'
+  gem 'database_cleaner'
 end
 
 group :development do
