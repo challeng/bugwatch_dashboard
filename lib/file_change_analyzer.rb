@@ -10,7 +10,7 @@ class FileChangeAnalyzer
 
 	def config_data_list
 		#hash of all the groups
-		AppConfig.file_changes['groups']
+		AppConfig.file_changes
 	end
 
 	def file_change_notifications(file_names, config_data)
