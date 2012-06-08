@@ -1,5 +1,3 @@
-require 'yaml'
-
 class NotificationMailer < ActionMailer::Base
 
   default :from => AppConfig.mailer['from']
@@ -20,7 +18,7 @@ class NotificationMailer < ActionMailer::Base
 
   def file_change(files_to_email, config_data)
     @file_names = files_to_email
-    email_addresses = config_data['email_addresses']
+    email_addresses = config_data['emails']
 
     email_addresses.each do |email|
       mail(:to => email, :subject => "Files were changed in the latest push")

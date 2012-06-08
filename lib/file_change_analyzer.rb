@@ -9,11 +9,12 @@ class FileChangeAnalyzer
 	end
 
 	def config_data_list
-		Dir["config/file_changes/*.yml"].map {|file_name| YAML.load_file(file_name) } 
+		#hash of all the groups
+		AppConfig.file_changes['groups']
 	end
 
 	def file_change_notifications(file_names, config_data)
-		files_to_watch = config_data['files_to_watch']
+		files_to_watch = config_data['files']
 		files_to_email = []
 
 		#loop through each file changed in commit
