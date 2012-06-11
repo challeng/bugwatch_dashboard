@@ -8,6 +8,7 @@ class Repo < ActiveRecord::Base
   has_many :users, :through => :subscriptions
   has_many :alerts, :through => :commits
   has_many :bug_fixes, :through => :commits
+  has_many :pivotal_defects
 
   REPO_DIR = "repos"
 
