@@ -48,4 +48,40 @@ class PivotalServiceTest < ActiveSupport::TestCase
     sut.activity(activity)
   end
 
+  test ".activity resolves defect if event type is update and state is resolved" do
+    activity = {"event_type" => "story_update", "story_type" => "bug", "project_id" => PROJECT_ID, "current_state" => "finished", "id" => "123"}
+    sut.stubs(:resolved?).returns(true)
+    pivotal_defect = PivotalDefect.new
+    PivotalDefect.expects(:find_by_ticket_id!).with("123").returns(pivotal_defect)
+    pivotal_defect.expects(:resolve!)
+    sut.activity(activity)
+  end
+
+  test ".activity does not resolve if event type is update and state is not resolved" do
+    activity = {"event_type" => "story_update", "story_type" => "bug", "project_id" => PROJECT_ID, "current_state" => "finished", "id" => "123"}
+    sut.stubs(:resolved?).returns(false)
+    PivotalDefect.expects(:find_by_ticket_id!).never
+    sut.activity(activity)
+  end
+
+  test ".activity does not resolve if event type is update and ticket not found" do
+    activity = {"event_type" => "story_update", "story_type" => "bug", "project_id" => PROJECT_ID, "current_state" => "finished", "id" => "123"}
+    sut.stubs(:resolved?).returns(true)
+    PivotalDefect.expects(:find_by_ticket_id!).raises(ActiveRecord::RecordNotFound)
+    PivotalDefect.any_instance.expects(:resolve!).never
+    sut.activity(activity)
+  end
+
+  test ".resolve_status resolves unscheduled to open" do
+    assert_false sut.resolved?("unscheduled")
+  end
+
+  test ".resolve_status resolves started to open" do
+      assert_false sut.resolved?("started")
+  end
+
+  test ".resolve_status resolves finished to closed" do
+      assert_true sut.resolved?("finished")
+  end
+
 end
