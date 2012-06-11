@@ -28,7 +28,7 @@ class CommitAnalysisWorkerTest < ActiveSupport::TestCase
     @commit ||= commits(:test_commit)
   end
 
-  attr_reader :sut, :repo_name, :repo_url, :git_analyzer, :fix_cache_analyzer
+  attr_reader :sut, :repo_name, :repo_url, :git_analyzer, :fix_cache_analyzer, :bugwatch_commit
 
   def setup
     @sut = CommitAnalysisWorker
@@ -36,6 +36,7 @@ class CommitAnalysisWorkerTest < ActiveSupport::TestCase
     @repo_url = "path/to/repo"
     @git_analyzer = Bugwatch::GitAnalyzer.new(repo.name, repo.url)
     @fix_cache_analyzer = Bugwatch::FixCacheAnalyzer.new(grit_repo, [])
+    @bugwatch_commit = stub('Bugwatch::Commit', :sha => commit.sha, :grit => grit_commit, :fixes => [bug_fix])
 
     ActiveRecordCache.any_instance.stubs(:commit_exists?).returns(false)
     Repo.expects(:find_or_create_by_name_and_url).with(repo_name, repo_url).
@@ -48,6 +49,8 @@ class CommitAnalysisWorkerTest < ActiveSupport::TestCase
     git_analyzer.stubs(:repo).returns(grit_repo)
     git_analyzer.stubs(:mine_for_commits).returns([grit_commit])
     grit_commit.stubs(:extend).with(CommitFu::FlogCommit).returns(grit_commit)
+    Bugwatch::Commit.stubs(:new).with(grit_commit).returns(bugwatch_commit)
+    FileChangeAnalyzer.stubs(:call)
   end
 
 
@@ -85,10 +88,8 @@ class CommitAnalysisWorkerTest < ActiveSupport::TestCase
   end
 
   test "#perform creates bug fixes for commit" do
-    bugfix = Bugwatch::BugFix.new(:file => "file.rb", :klass => "Test", :function => "method", :date => "2010-10-10")
-    Bugwatch::Commit.stubs(:new).with(grit_commit).returns(stub('FixCommit', :sha => commit.sha, :grit => grit_commit, :fixes => [bugfix]))
     BugFix.expects(:find_or_create_by_file_and_klass_and_function_and_commit_id).
-        with(bugfix.file, bugfix.klass, bugfix.function, commit.id, :date_fixed => bugfix.date)
+        with(bug_fix.file, bug_fix.klass, bug_fix.function, commit.id, :date_fixed => bug_fix.date)
     sut.perform(repo_name, repo_url, commit.sha)
   end
 
@@ -157,6 +158,12 @@ class CommitAnalysisWorkerTest < ActiveSupport::TestCase
   test "#perform does not deliver welcome email if not first alert" do
     fix_cache_analyzer.expects(:alerts).with(commit.sha).returns([bug_fix])
     NotificationMailer.expects(:welcome).never
+    sut.perform(repo_name, repo_url, commit.sha)
+  end
+
+  test "#perform calls FileChangeAnalyzer" do
+    FileChangeAnalyzer.unstub(:call)
+    FileChangeAnalyzer.expects(:call).with(bugwatch_commit)
     sut.perform(repo_name, repo_url, commit.sha)
   end
 
