@@ -11,7 +11,15 @@ module Bugwatch
     end
 
     def sha
-      @grit.sha
+      grit.sha
+    end
+
+    def diffs
+      grit.diffs.map {|diff| Diff.new(diff) }
+    end
+
+    def files
+      grit.stats.files.map(&:first)
     end
 
     def fixes
@@ -26,20 +34,22 @@ module Bugwatch
       end
     end
 
+    # TODO don't use grit blob
+    def identify(filename, line_number)
+      blob = grit / filename
+      blob ? MethodParser.find(blob.data, line_number..line_number) : {}
+    end
+
     private
 
     def get_bug_fixes(diff, file)
-      DiffParser.parse_class_and_functions(diff).flat_map do |klass, methods|
+      Diff.new(diff).parse_class_and_functions.flat_map do |klass, methods|
         methods.map { |function|
           BugFix.new(:file => file, :date => grit.committed_date, :sha => grit.sha,
                      :klass => klass, :function => function) }
       end
     rescue Racc::ParseError, SyntaxError
       []
-    end
-
-    def files
-      grit.stats.files.map(&:first)
     end
 
     def ruby_files

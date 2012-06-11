@@ -22,15 +22,18 @@ Gem::Specification.new do |s|
     bugwatch.gemspec
     lib/bugwatch.rb
     lib/bugwatch/bug_fix.rb
-    lib/bugwatch/diff_parser.rb
+    lib/bugwatch/commit.rb
+    lib/bugwatch/diff.rb
+    lib/bugwatch/exception_data.rb
+    lib/bugwatch/exception_tracker.rb
     lib/bugwatch/file_helper.rb
+    lib/bugwatch/file_system_cache.rb
     lib/bugwatch/fix_cache.rb
     lib/bugwatch/fix_cache_analyzer.rb
-    lib/bugwatch/commit.rb
     lib/bugwatch/git_analyzer.rb
-    lib/bugwatch/file_system_cache.rb
     lib/bugwatch/hot_spot.rb
     lib/bugwatch/method_parser.rb
+    lib/bugwatch/repo.rb
   ]
   # = MANIFEST =
 
