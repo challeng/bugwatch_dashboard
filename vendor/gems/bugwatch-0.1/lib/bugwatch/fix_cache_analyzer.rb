@@ -25,7 +25,7 @@ module Bugwatch
       hot_spots = cache.hot_spots.select {|hot_spot| commit_files.include?(hot_spot.file) }
       diffs = commit.diffs.select {|diff| hot_spots.map(&:file).include?(diff.b_path) }
       hot_spots.sort_by(&:file).zip(diffs.sort_by(&:b_path)).flat_map do |(hot_spot, diff)|
-        Bugwatch::DiffParser.parse_class_and_functions(diff).flat_map do |(klass, methods)|
+        Bugwatch::Diff.new(diff).parse_class_and_functions.flat_map do |(klass, methods)|
           hot_spot.bug_fixes.select {|bug_fix| bug_fix.klass == klass && methods.include?(bug_fix.function) }
         end
       end

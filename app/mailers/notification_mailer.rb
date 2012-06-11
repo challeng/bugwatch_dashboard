@@ -16,4 +16,9 @@ class NotificationMailer < ActionMailer::Base
     mail(:to => @user.email, :subject => "Welcome to Bugwatch")
   end
 
+  def file_change(files_to_email, email_addresses)
+    @file_names = files_to_email
+    mail(:to => email_addresses, :subject => "Files were changed in the latest commit")
+  end
+
 end
