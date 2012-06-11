@@ -4,10 +4,19 @@ class Defect < ActiveRecord::Base
 
   after_initialize :set_status
 
+  OPEN = 0
+  CLOSED = 1
+
+  scope :open_defects, where(status: OPEN)
+
+  def resolve!
+    update_attribute(:status, CLOSED)
+  end
+
   private
 
   def set_status
-    self.status = 0 if self.status.nil?
+    self.status = OPEN if self.status.nil?
   end
 
 end
