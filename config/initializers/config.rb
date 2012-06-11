@@ -11,6 +11,7 @@ end
 
 AppConfig.mailer = get_config("mailer.yml", {})
 AppConfig.git_domains = get_config("git_domains.yml", [])
+AppConfig.file_changes = get_config("file_change.yml", {})
 AppConfig.pivotal_projects = get_config("pivotal_projects", {})
 
 ActionMailer::Base.smtp_settings = {

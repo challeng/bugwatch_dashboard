@@ -6,3 +6,5 @@ before_script:
   - cp config/database.example.yml config/database.yml
   - mysql -e 'create database bugwatch_dashboard_test;'
   - rake db:migrate
+before_install:
+  - gem install rugged-0.16.1.gem
