@@ -9,8 +9,12 @@ module Bugwatch
       grit_repo.commit(sha)
     end
 
-    def walk(sha, &action)
-      rugged_repo.walk(sha, action)
+    def walk(sha)
+      rugged_repo.walk(sha, Rugged::SORT_DATE)
+    end
+
+    def tree
+      grit_repo.tree
     end
 
     private
