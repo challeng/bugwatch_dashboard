@@ -14,6 +14,7 @@
 /config/database.yml
 /config/mailer.yml
 /config/git_domains.yml
+/config/file_change.yml
 
 # Ignore all logfiles and tempfiles.
 /log/*.log
