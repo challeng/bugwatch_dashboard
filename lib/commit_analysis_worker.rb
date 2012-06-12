@@ -11,7 +11,7 @@ class CommitAnalysisWorker
       Grit::Git.git_max_size = 1000000000
       repo = Repo.find_or_create_by_name_and_url(repo_name, repo_url)
       git_analyzer = repo.git_analyzer
-      fix_cache_analyzer = Bugwatch::FixCacheAnalyzer.new(git_analyzer.repo, repo.bug_fixes)
+      fix_cache_analyzer = Bugwatch::FixCacheAnalyzer.new(git_analyzer.repo, repo.bug_fixes.map(&:bugwatch))
       git_analyzer.on_commit << CommitAnalyzer.new(repo)
       git_analyzer.on_commit << FileChangeAnalyzer
       git_analyzer.on_commit << fix_cache_analyzer
@@ -24,9 +24,9 @@ class CommitAnalysisWorker
 
     private
 
-    def deliver_alerts(commit, fix_cache)
+    def deliver_alerts(commit, fix_cache_analyzer)
       existing_alerts = commit.user.alerts.any?
-      alerts = create_alerts(commit, fix_cache)
+      alerts = create_alerts(commit, fix_cache_analyzer)
       if send_alert?(alerts, commit)
         if existing_alerts
           NotificationMailer.alert(alerts, commit).deliver
@@ -36,8 +36,8 @@ class CommitAnalysisWorker
       end
     end
 
-    def create_alerts(commit, fix_cache)
-      fix_cache.alerts(commit.sha).map do |bug_fix|
+    def create_alerts(commit, fix_cache_analyzer)
+      fix_cache_analyzer.alerts(commit.sha).map do |bug_fix|
         Alert.create(:commit => commit, :file => bug_fix.file, :klass => bug_fix.klass, :function => bug_fix.function)
       end
     end
