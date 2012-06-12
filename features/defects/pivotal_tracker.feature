@@ -32,3 +32,13 @@ Then we want to keep track of stories related to bugs
       | 123 | 50         | story_update | bug        | finished      |
     Then the pivotal tracker open defects for "bugwatch" should be:
       | id |
+
+  Scenario: Story deleted when started
+    Given I have a pivotal tracker defect:
+      | title    | status | id  |
+      | Some bug | open   | 999 |
+    When I receive pivotal tracker activity:
+      | id  | project_id | event_type   | story_type | current_state |
+      | 999 | 50         | story_delete | bug        | deleted       |
+    Then the pivotal tracker open defects for "bugwatch" should be:
+      | id |
