@@ -1,1 +1,5 @@
 from: email@address
+domain: example.com
+host: example.com
+user_name: email@example.com
+password: "Base64 encoded password"
