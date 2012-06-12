@@ -25,7 +25,7 @@ set :keep_releases, 5
 default_run_options[:pty] = true
 ssh_options[:paranoid]    = false
 
-set :shared_config, %w{config/database.yml config/mailer.yml config/git_domains.yml}
+set :shared_config, %w{config/database.yml config/mailer.yml config/git_domains.yml config/file_change.yml}
 
 namespace :shared_config do
   desc "Uploads local configuration files"
