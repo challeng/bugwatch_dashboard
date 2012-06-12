@@ -13,4 +13,10 @@ class DefectTest < ActiveSupport::TestCase
     assert_equal Defect::CLOSED, sut.status
   end
 
+  test "#archive! sets status to archived" do
+    sut = Defect.create!
+    sut.archive!
+    assert_equal Defect::ARCHIVED, sut.status
+  end
+
 end

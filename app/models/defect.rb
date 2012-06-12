@@ -6,11 +6,16 @@ class Defect < ActiveRecord::Base
 
   OPEN = 0
   CLOSED = 1
+  ARCHIVED = 2
 
   scope :open_defects, where(status: OPEN)
 
   def resolve!
     update_attribute(:status, CLOSED)
+  end
+
+  def archive!
+    update_attribute(:status, ARCHIVED)
   end
 
   private

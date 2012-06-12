@@ -1,11 +1,8 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
 
-one:
-  priority: MyString
-  title: MyString
-  ticket_id: MyString
-
-two:
-  priority: MyString
-  title: MyString
-  ticket_id: MyString
+pivotal_open:
+  priority:
+  title: Open defect
+  ticket_id: 987
+  status: 0
+  type: PivotalDefect
