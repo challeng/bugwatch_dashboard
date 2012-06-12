@@ -8,6 +8,7 @@ class PivotalService
     case event_type
       when "story_create" then create(project_id, ticket_id, title)
       when "story_update" then update(ticket_id, current_state)
+      when "story_delete" then archive(ticket_id)
     end
   rescue ActiveRecord::RecordNotFound
     nil
@@ -39,6 +40,11 @@ class PivotalService
     return unless resolved? current_state
     pivotal_defect = PivotalDefect.find_by_ticket_id! ticket_id
     pivotal_defect.resolve!
+  end
+
+  def self.archive(ticket_id)
+    pivotal_defect = PivotalDefect.find_by_ticket_id! ticket_id
+    pivotal_defect.archive!
   end
 
   def self.repo_name_by_project_id(project_id)

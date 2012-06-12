@@ -72,6 +72,14 @@ class PivotalServiceTest < ActiveSupport::TestCase
     sut.activity(activity)
   end
 
+  test ".activity archives open defect if event type is delete" do
+    defect = defects(:pivotal_open)
+    activity = {"event_type" => "story_delete", "story_type" => "bug", "project_id" => PROJECT_ID, "current_state" => "deleted", "id" => defect.ticket_id}
+    PivotalDefect.expects(:find_by_ticket_id!).with(defect.ticket_id).returns(defect)
+    defect.expects(:archive!)
+    sut.activity(activity)
+  end
+
   test ".resolve_status resolves unscheduled to open" do
     assert_false sut.resolved?("unscheduled")
   end
