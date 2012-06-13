@@ -9,7 +9,6 @@ class FileChangeAnalyzer
     end
 
     def config_data_list
-      #hash of all the groups
       AppConfig.file_changes
     end
 
@@ -20,10 +19,8 @@ class FileChangeAnalyzer
         files_to_watch.include? file_name
       end
 
-      #send email here
-      if !files_to_email.empty?
-        NotificationMailer.file_change(files_to_email, config_data['emails']).deliver
-      end
+
+      NotificationMailer.file_change(files_to_email, config_data['emails']).deliver unless files_to_email.empty?
     end
 
   end
