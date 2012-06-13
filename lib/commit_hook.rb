@@ -28,13 +28,13 @@ class CommitHook < Sinatra::Base
   end
 
   def sha?(data)
-    data.match(/^[a-z0-9]+$/)
+    data.match(/^[a-f0-9]+$/)
   end
 
   def url?(data)
     URI.parse(data)
   rescue URI::InvalidURIError
-    data.match(/^git\@git\:[A-Za-z0-9_-]+\.git/)
+    data.match(/^git\@git\:[A-Za-z0-9_-]+\.git$/)
   end
 
 end
