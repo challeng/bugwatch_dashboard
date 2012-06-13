@@ -43,7 +43,7 @@ module Bugwatch
     private
 
     def get_bug_fixes(diff, file)
-      Diff.new(diff).parse_class_and_functions.flat_map do |klass, methods|
+      Diff.new(diff).modifications.flat_map do |klass, methods|
         methods.map { |function|
           BugFix.new(:file => file, :date => grit.committed_date, :sha => grit.sha,
                      :klass => klass, :function => function) }
