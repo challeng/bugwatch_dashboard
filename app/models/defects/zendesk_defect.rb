@@ -1,0 +1,3 @@
+class ZendeskDefect < Defect
+
+end

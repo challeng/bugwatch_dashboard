@@ -1,12 +1,13 @@
 require 'hooks/commit_hook'
-require 'hooks/defect_hook'
+require 'hooks/zendesk_hook'
 
 BugwatchDashboard::Application.routes.draw do
 
   resources :subscription
 
   match '/hook', :to => CommitHook
-  match '/defect', :to => DefectHook
+  match '/zendesk', :to => ZendeskHook
+
   resource :sessions
   resources :repos do
     resources :alerts
