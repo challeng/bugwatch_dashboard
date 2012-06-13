@@ -1,14 +1,7 @@
-require 'test_helper'
-require 'rack/test'
+require 'rack_test_helper'
 
-ENV['RACK_ENV'] = 'test'
-
-class CommitHookTests < Test::Unit::TestCase
-  include Rack::Test::Methods
-
-  def app
-    CommitHook
-  end
+class CommitHookTest < Test::Unit::TestCase
+  include RackTest
 
   def repo_params
     {:name => 'test_repo', :url => 'path/to/repo'}
