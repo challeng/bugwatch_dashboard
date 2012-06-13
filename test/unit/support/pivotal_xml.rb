@@ -31,28 +31,26 @@ class PivotalXml
     end
 
     def update_start
-      story_update "started"
+      story current_state: "started"
     end
 
     def update_finished
-      story_update "finished"
+      story current_state: "finished"
     end
 
     def update_delivered
-      story_update "delivered"
+      story current_state: "delivered"
     end
 
     def update_accepted
-      story_update "accepted", :accepted => true
+      story current_state: "accepted", accepted: true
     end
 
     def story_deleted
-      story_update "deleted", :event_type => "story_delete"
+      story current_state: "deleted", event_type: "story_delete"
     end
 
-    private
-
-    def story(state, opts={})
+    def story(opts={})
       <<-XML
 <?xml version="1.0" encoding="UTF-8"?>
 <activity>
@@ -61,13 +59,14 @@ class PivotalXml
    <event_type>#{opts[:event_type] || "story_update"}</event_type>
    <occurred_at type="datetime">2010/01/01 19:54:59 UTC</occurred_at>
    <author>author_name</author>
-   <project_id type="integer">#{PROJECT_ID}</project_id>
+   <project_id type="integer">#{opts[:project_id] || PROJECT_ID}</project_id>
    <description>user started "Doesn't work"</description>
    <stories type="array">
       <story>
-         <id type="integer">#{STORY_ID}</id>
+         <id type="integer">#{opts[:id] || STORY_ID}</id>
          <url>http://www.pivotaltracker.com/</url>
-         <current_state>#{state}</current_state>#{
+         <story_type>bug</story_type>
+         <current_state>#{opts[:current_state] || "unscheduled"}</current_state>#{
       %q{<accepted_at type="datetime">2010/01/01 19:55:08 UTC</accepted_at>} if opts[:accepted]
           }
       </story>

@@ -1,5 +1,6 @@
 require 'hooks/commit_hook'
 require 'hooks/zendesk_hook'
+require 'hooks/pivotal_hook'
 
 BugwatchDashboard::Application.routes.draw do
 
@@ -7,6 +8,7 @@ BugwatchDashboard::Application.routes.draw do
 
   match '/hook', :to => CommitHook
   match '/zendesk', :to => ZendeskHook
+  match '/pivotal', :to => PivotalHook
 
   resource :sessions
   resources :repos do
