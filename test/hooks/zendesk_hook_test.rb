@@ -1,14 +1,7 @@
-require 'test_helper'
-require 'rack/test'
+require 'rack_test_helper'
 
-ENV['RACK_ENV'] = 'test'
-
-class ZendeskHookTests < Test::Unit::TestCase
-  include Rack::Test::Methods
-
-  def app
-    ZendeskHook
-  end
+class ZendeskHookTest < Test::Unit::TestCase
+  include RackTest
 
   test "GET /zendesk creates defect" do
     priority = "Urgent"
