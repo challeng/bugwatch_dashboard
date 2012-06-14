@@ -2,7 +2,8 @@ Feature: When Bugwatch receives activity from Pivotal Tracker
 Then we want to keep track of stories related to bugs
 
   Background:
-    Given I have a repository "bugwatch" with a pivotal project id "50"
+    Given I have a repository "bugwatch"
+    And the repository "bugwatch" has a pivotal project id "50"
 
   Scenario: Story created
     When I receive pivotal tracker activity:
