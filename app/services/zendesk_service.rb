@@ -2,14 +2,19 @@ class ZendeskService
 
   class << self
 
+    OPEN_STATUSES = %w(new open pending)
+    CLOSED_STATUSES = %w(solved)
+
     def activity(activity_data)
-      return if config.empty?
-      repo = Repo.find_by_name! config[activity_data["secret"]]
-      ticket_id = activity_data["id"]
-      priority = (activity_data["priority"] || "").downcase
-      title = activity_data["title"]
-      status = resolve_status(activity_data["status"])
-      ZendeskDefect.create! ticket_id: ticket_id, priority: priority, title: title, status: status, repo: repo
+      target_repo, ticket_id, status = config[activity_data["secret"]], activity_data["id"], activity_data["status"]
+      return unless target_repo
+      repo = Repo.find_by_name! target_repo
+      existing_ticket = repo.zendesk_defects.find_by_ticket_id ticket_id
+      if existing_ticket
+        update_defect(existing_ticket, status)
+      else
+        create_defect(activity_data, repo, ticket_id, status)
+      end
     rescue ActiveRecord::RecordNotFound
       nil
     end
@@ -20,12 +25,23 @@ class ZendeskService
 
     private
 
+    def create_defect(activity_data, repo, ticket_id, status)
+      priority = activity_data["priority"]
+      title = activity_data["title"]
+      resolved_status = resolve_status(status)
+      ZendeskDefect.create! ticket_id: ticket_id, priority: priority, title: title, status: resolved_status, repo: repo
+    end
+
+    def update_defect(existing_ticket, status)
+      existing_ticket.resolve! if resolved? status
+    end
+
     def resolve_status(status)
-      case status.downcase
-        when "new", "open", "pending" then ZendeskDefect::OPEN
-        when "solved" then ZendeskDefect::CLOSED
-        else nil
-      end
+      resolved?(status) ? ZendeskDefect::CLOSED : ZendeskDefect::OPEN
+    end
+
+    def resolved?(status)
+      CLOSED_STATUSES.include? status.downcase
     end
 
   end

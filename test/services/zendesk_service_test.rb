@@ -11,6 +11,7 @@ class ZendeskServiceTest < ActiveSupport::TestCase
     @status = "New"
     @secret = "repo_identifier"
     @sut = ZendeskService
+    AppConfig.stubs(:zendesk).returns({secret => repo.name})
   end
 
   def repo
@@ -23,40 +24,44 @@ class ZendeskServiceTest < ActiveSupport::TestCase
   end
 
   test ".activity creates new open zendesk defect for new issues" do
-    AppConfig.stubs(:zendesk).returns({secret => repo.name})
-    ZendeskDefect.expects(:create!).with(ticket_id: ticket_id, priority: priority.downcase, title: title,
+    ZendeskDefect.expects(:create!).with(ticket_id: ticket_id, priority: priority, title: title,
                                          status: ZendeskDefect::OPEN, :repo => repo)
     sut.activity(get_activity)
   end
 
   test ".activity creates new open zendesk defect for open issues" do
-    AppConfig.stubs(:zendesk).returns({secret => repo.name})
-    ZendeskDefect.expects(:create!).with(ticket_id: ticket_id, priority: priority.downcase, title: title,
+    ZendeskDefect.expects(:create!).with(ticket_id: ticket_id, priority: priority, title: title,
                                          status: ZendeskDefect::OPEN, :repo => repo)
     sut.activity(get_activity("status" => "Open"))
   end
 
   test ".activity creates new open zendesk defect for pending issues" do
-    AppConfig.stubs(:zendesk).returns({secret => repo.name})
-    ZendeskDefect.expects(:create!).with(ticket_id: ticket_id, priority: priority.downcase, title: title,
+    ZendeskDefect.expects(:create!).with(ticket_id: ticket_id, priority: priority, title: title,
                                          status: ZendeskDefect::OPEN, :repo => repo)
     sut.activity(get_activity("status" => "Pending"))
   end
 
   test ".activity creates new closed zendesk defect for solved issues" do
-    AppConfig.stubs(:zendesk).returns({secret => repo.name})
-    ZendeskDefect.expects(:create!).with(ticket_id: ticket_id, priority: priority.downcase, title: title,
+    ZendeskDefect.expects(:create!).with(ticket_id: ticket_id, priority: priority, title: title,
                                          status: ZendeskDefect::CLOSED, :repo => repo)
     sut.activity(get_activity("status" => "Solved"))
   end
 
-  test ".activity does not create zendesk defect if zendesk not configured" do
-    AppConfig.stubs(:zendesk).returns({})
+  test ".activity resolves existing ticket" do
+    defect = ZendeskDefect.create! ticket_id: ticket_id, priority: priority, status: ZendeskDefect::OPEN, :repo => repo
+    sut.activity(get_activity("status" => "Solved"))
+    assert_equal ZendeskDefect::CLOSED, defect.reload.status
+  end
+
+  test ".activity does not create zendesk defect if zendesk not configured for repo" do
+    AppConfig.unstub(:zendesk)
+    AppConfig.stubs(:zendesk).returns({"secret_doesnt_exist" => repo.name})
     ZendeskDefect.expects(:create!).never
     sut.activity(get_activity)
   end
 
   test ".activity does not create zendesk defect if repo for secret not found" do
+    AppConfig.unstub(:zendesk)
     AppConfig.stubs(:zendesk).returns({secret => "repo_doesnt_exist"})
     ZendeskDefect.expects(:create!).never
     sut.activity(get_activity)

@@ -35,3 +35,13 @@ Then we want to track the tickets related to defects
       | 123 | urgent   | Broken | Solved | bugwatch |
     Then I should have the following open zendesk defects:
       | id |
+
+  Scenario: Updating open ticket to closed
+    Given I have a zendesk defect:
+      | id  | title    | status |
+      | 123 | Open bug | open   |
+    When I receive zendesk activity:
+      | id  | status | secret   |
+      | 123 | Solved | bugwatch |
+    Then I should have the following open zendesk defects:
+      | id  |
