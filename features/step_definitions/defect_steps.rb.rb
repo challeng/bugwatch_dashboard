@@ -21,12 +21,22 @@ def resolve_status(status_phrase)
   end
 end
 
+def create_defect(defect_class, defect_data)
+  defect_title = defect_data["title"] || "title"
+  defect_status = resolve_status(defect_data["status"])
+  ticket_id = defect_data["id"]
+  defect_class.create! title: defect_title, status: defect_status, repo: @repo, ticket_id: ticket_id
+end
+
 Given /^I have a pivotal tracker defect:$/ do |table|
   table.hashes.each do |defect_data|
-    defect_title = defect_data["title"]
-    defect_status = resolve_status(defect_data["status"])
-    ticket_id = defect_data["id"]
-    PivotalDefect.create! title: defect_title, status: defect_status, repo: @repo, ticket_id: ticket_id
+    create_defect(PivotalDefect, defect_data)
+  end
+end
+
+Given /^I have a zendesk defect:$/ do |table|
+  table.hashes.each do |defect_data|
+    create_defect(ZendeskDefect, defect_data)
   end
 end
 

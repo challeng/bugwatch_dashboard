@@ -19,4 +19,9 @@ class DefectTest < ActiveSupport::TestCase
     assert_equal Defect::ARCHIVED, sut.status
   end
 
+  test "downcases priority before save" do
+    sut = Defect.create! :priority => "High"
+    assert_equal "high", sut.priority
+  end
+
 end
