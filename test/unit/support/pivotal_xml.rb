@@ -75,5 +75,25 @@ class PivotalXml
       XML
     end
 
+    def stories
+      STORIES_XML <<-XML
+<stories type="array" filter="type:bug" count="1" total="1">
+  <story>
+    <id type="integer">12345</id>
+    <project_id type="integer">#{PROJECT_ID}</project_id>
+    <story_type>bug</story_type>
+    <url>http://www.pivotaltracker.com/story/show/12345</url>
+    <current_state>started</current_state>
+    <description>abc</description>
+    <name>test</name>
+    <requested_by>owner</requested_by>
+    <owned_by>owner</owned_by>
+    <created_at type="datetime">2012/06/11 17:25:47 UTC</created_at>
+    <updated_at type="datetime">2012/06/13 17:21:50 UTC</updated_at>
+  </story>
+</stories>
+      XML
+    end
+
   end
 end
