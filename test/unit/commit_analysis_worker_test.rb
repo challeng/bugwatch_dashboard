@@ -7,8 +7,8 @@ class CommitAnalysisWorkerTest < ActiveSupport::TestCase
     repos(:test_repo)
   end
 
-  def grit_repo
-    @grit_repo ||= stub("Grit::Repo")
+  def bugwatch_repo
+    @bugwatch_repo ||= stub("Bugwatch::Repo")
   end
 
   def user
@@ -35,10 +35,11 @@ class CommitAnalysisWorkerTest < ActiveSupport::TestCase
     @repo_name = "test_repo"
     @repo_url = "path/to/repo"
     @git_analyzer = Bugwatch::GitAnalyzer.new(repo.name, repo.url)
-    @fix_cache_analyzer = Bugwatch::FixCacheAnalyzer.new(grit_repo, [])
+    @fix_cache_analyzer = Bugwatch::FixCacheAnalyzer.new(bugwatch_repo, [])
     @bugwatch_commit = stub('Bugwatch::Commit', :sha => commit.sha, :grit => grit_commit, :fixes => [bug_fix])
 
     ActiveRecordCache.any_instance.stubs(:commit_exists?).returns(false)
+    ActiveRecordCache.any_instance.stubs(:last_commit_sha).returns(nil)
     Repo.expects(:find_or_create_by_name_and_url).with(repo_name, repo_url).
         returns(repo)
     Bugwatch::GitAnalyzer.expects(:new).with(repo.name, repo.url).returns(git_analyzer)
@@ -46,7 +47,7 @@ class CommitAnalysisWorkerTest < ActiveSupport::TestCase
     fix_cache_analyzer.stubs(:alerts).returns([])
     fix_cache_analyzer.stubs(:call)
     git_analyzer.stubs(:update_repo)
-    git_analyzer.stubs(:repo).returns(grit_repo)
+    git_analyzer.stubs(:repo).returns(bugwatch_repo)
     git_analyzer.stubs(:mine_for_commits).returns([grit_commit])
     grit_commit.stubs(:extend).with(CommitFu::FlogCommit).returns(grit_commit)
     Bugwatch::Commit.stubs(:new).with(grit_commit).returns(bugwatch_commit)

@@ -28,7 +28,9 @@ module Bugwatch
     private
 
     def cache_json
-      JSON.parse(File.read(path_to_cache))
+      cache_exists? ?
+        JSON.parse(File.read(path_to_cache)) :
+        {}
     end
 
     def path_to_cache

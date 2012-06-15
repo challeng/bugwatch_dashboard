@@ -23,11 +23,8 @@ module Bugwatch
     end
 
     def add(commit_sha)
-      unless caching_strategy.commit_exists?(commit_sha)
-        update_repo
-        new_commits(commit_sha).each do |commit|
-          caching_strategy.store(commit)
-        end
+      commits(commit_sha).each do |commit|
+        caching_strategy.store(commit)
       end
     end
 
@@ -37,8 +34,7 @@ module Bugwatch
 
     def commits(begin_sha)
       Enumerator.new do |y|
-        mine_for_commits(begin_sha).each do |commit|
-          next if merge_commit? commit
+        filtered_commits(begin_sha).each do |commit|
           bugwatch_commit = Commit.new(commit)
           run_callbacks(bugwatch_commit)
           y << bugwatch_commit
@@ -48,15 +44,17 @@ module Bugwatch
 
     private
 
-    def new_commits(new_commit_sha)
-      if caching_strategy.cache_exists?
-        commits(new_commit_sha).take(1)
-      else
-        commits(new_commit_sha)
+    def filtered_commits(begin_sha)
+      Enumerator.new do |y|
+        mine_for_commits(begin_sha).each do |commit|
+          break if caching_strategy.commit_exists? commit.sha
+          y << commit unless merge_commit?(commit)
+        end
       end
     end
 
     def mine_for_commits(new_commit_sha)
+      update_repo
       Enumerator.new do |y|
         repo.walk(new_commit_sha).each do |rugged_commit|
           grit_commit = repo.commit(rugged_commit.oid)
