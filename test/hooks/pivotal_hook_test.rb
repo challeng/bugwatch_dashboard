@@ -21,6 +21,7 @@ class PivotalHookTest < Test::Unit::TestCase
     PivotalService.stubs(:activity).with(anything).raises(Exception)
     Rails.logger.expects(:error).with(anything)
     post "/pivotal", {:body => ""}
+    assert_equal last_response.body, "OK"
   end
 
 end

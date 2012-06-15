@@ -17,6 +17,7 @@ class PivotalHook < Sinatra::Base
     rescue Exception => e
       Rails.logger.error e
     end
+    "OK"
   end
 
 end
