@@ -6,10 +6,20 @@ class PivotalService
     project_id, title, ticket_id, current_state =
         activity_data["project_id"], activity_data["story_name"], activity_data["id"], activity_data["current_state"]
     case event_type
-      when "story_create" then create(project_id, ticket_id, title)
+      when "story_create" then create(project_id, ticket_id, title, current_state)
       when "story_update" then update(ticket_id, current_state)
       when "story_delete" then archive(ticket_id)
     end
+  rescue ActiveRecord::RecordNotFound
+    nil
+  end
+
+  def self.import(project_id)
+    repo_name = repo_name_by_project_id(project_id)
+    return unless repo_name
+    repo = Repo.find_by_name! repo_name
+    doc = Nokogiri::XML get_stories_xml(project_id)
+    each_story(doc, repo, &method(:create_defect))
   rescue ActiveRecord::RecordNotFound
     nil
   end
@@ -28,12 +38,16 @@ class PivotalService
 
   private
 
-  def self.create(project_id, ticket_id, title)
+  def self.create(project_id, ticket_id, title, current_state)
     repo_name = repo_name_by_project_id(project_id)
     if repo_name
       repo = Repo.find_by_name! repo_name
-      PivotalDefect.create! title: title, ticket_id: ticket_id, repo: repo
+      create_defect(current_state, repo, ticket_id, title)
     end
+  end
+
+  def self.create_defect(current_state, repo, ticket_id, title)
+    PivotalDefect.find_or_create_by_ticket_id_and_repo_id(ticket_id, repo.id, title: title, status: resolved_status(current_state))
   end
 
   def self.update(ticket_id, current_state)
@@ -45,6 +59,23 @@ class PivotalService
   def self.archive(ticket_id)
     pivotal_defect = PivotalDefect.find_by_ticket_id! ticket_id
     pivotal_defect.archive!
+  end
+
+  def self.resolved_status(current_state)
+    resolved?(current_state) ? PivotalDefect::CLOSED : PivotalDefect::OPEN
+  end
+
+  def self.each_story(doc, repo, &block)
+    (doc / "stories").each do |story|
+      ticket_id = (story / "id").text
+      title = (story / "name").text
+      current_state = (story / "current_state").text
+      block.call(current_state, repo, ticket_id, title)
+    end
+  end
+
+  def self.get_stories_xml(project_id)
+    HTTParty.get("http://www.pivotaltracker.com/services/v3/projects/#{project_id}/stories?filter=type:bug")
   end
 
   def self.repo_name_by_project_id(project_id)
