@@ -21,6 +21,8 @@ gem 'rake'
 gem 'twitter-bootstrap-rails'
 gem 'simple_form'
 
+gem 'httparty'
+
 # Gems used only for assets and not required
 # in production environments by default.
 group :assets do

@@ -1,24 +1,31 @@
 require 'test_helper'
+require 'unit/support/pivotal_xml'
 
 class PivotalServiceTest < ActiveSupport::TestCase
 
   PROJECT_ID = "1"
 
-  attr_reader :sut
+  attr_reader :sut, :ticket_id, :title
 
   def setup
     @sut = PivotalService
+    @ticket_id = "123"
+    @title = "title"
+  end
+
+  def repo
+    @repo ||= repos(:test_repo)
   end
 
   test ".activity creates pivotal defect if event type is create and story is bug" do
-    activity_title = "title"
     activity_description = "test"
-    ticket_id = "123"
-    repo = repos(:test_repo)
+    current_state = "started"
     AppConfig.stubs(:pivotal_projects).returns({repo.name => [PROJECT_ID]})
+    sut.stubs(:resolved_status).with(current_state).returns(PivotalDefect::OPEN)
     activity = {"event_type" => "story_create", "description" => activity_description, "story_type" => "bug",
-                "project_id" => PROJECT_ID, "id" => ticket_id, "story_name" => activity_title}
-    PivotalDefect.expects(:create!).with(title: activity_title, ticket_id: ticket_id, repo: repo)
+                "project_id" => PROJECT_ID, "id" => ticket_id, "story_name" => title, "current_state" => current_state}
+    PivotalDefect.expects(:find_or_create_by_ticket_id_and_repo_id).with(
+        ticket_id, repo.id, title: title, :status => PivotalDefect::OPEN)
     sut.activity(activity)
   end
 
@@ -80,16 +87,56 @@ class PivotalServiceTest < ActiveSupport::TestCase
     sut.activity(activity)
   end
 
-  test ".resolve_status resolves unscheduled to open" do
+  test ".resolved? resolves unscheduled to open" do
     assert_false sut.resolved?("unscheduled")
   end
 
-  test ".resolve_status resolves started to open" do
-      assert_false sut.resolved?("started")
+  test ".resolved? resolves started to open" do
+    assert_false sut.resolved?("started")
   end
 
-  test ".resolve_status resolves finished to closed" do
-      assert_true sut.resolved?("finished")
+  test ".resolved? resolves finished to closed" do
+    assert_true sut.resolved?("finished")
+  end
+
+  test ".import gets stories from api" do
+    AppConfig.stubs(:pivotal_projects).returns({repo.name => [PROJECT_ID]})
+    HTTParty.expects(:get).with("http://www.pivotaltracker.com/services/v3/projects/#{PROJECT_ID}/stories?filter=type:bug").
+        returns(PivotalXml.stories)
+    sut.import(PROJECT_ID)
+  end
+
+  test ".import finds or creates defect for unresolved story" do
+    AppConfig.stubs(:pivotal_projects).returns({repo.name => [PROJECT_ID]})
+    current_state = "started"
+    sut.stubs(:get_stories_xml).returns(
+        PivotalXml.stories(current_state: current_state, id: ticket_id, name: title, project_id: PROJECT_ID))
+    sut.expects(:resolved?).with(current_state).returns(false)
+    PivotalDefect.expects(:find_or_create_by_ticket_id_and_repo_id).with(
+        ticket_id, repo.id, title: title, status: PivotalDefect::OPEN)
+    sut.import(PROJECT_ID)
+  end
+
+  test ".import finds or creates defect for resolved story" do
+    AppConfig.stubs(:pivotal_projects).returns({repo.name => [PROJECT_ID]})
+    current_state = "finished"
+    sut.stubs(:get_stories_xml).returns(
+        PivotalXml.stories(current_state: current_state, id: ticket_id, name: title, project_id: PROJECT_ID))
+    sut.expects(:resolved?).with(current_state).returns(true)
+    PivotalDefect.expects(:find_or_create_by_ticket_id_and_repo_id).with(
+        ticket_id, repo.id, title: title, status: PivotalDefect::CLOSED)
+    sut.import(PROJECT_ID)
+  end
+
+  test ".import does not get stories from api if project not configured" do
+    sut.expects(:get_stories_xml).never
+    sut.import(9999938483)
+  end
+
+  test ".import does not get stories from api if project configured but repo not found" do
+    AppConfig.stubs(:pivotal_projects).returns({"not the right repo name" => [PROJECT_ID]})
+    sut.expects(:get_stories_xml).never
+    sut.import(PROJECT_ID)
   end
 
 end
