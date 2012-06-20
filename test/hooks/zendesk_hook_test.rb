@@ -9,7 +9,7 @@ class ZendeskHookTest < Test::Unit::TestCase
     ticket_id = "12345"
     status = "Urgent"
     secret = "bugwatch"
-    params = {priority: priority, title: title, id: ticket_id, status: status, secret: secret}
+    params = {priority: priority, subject: title, id: ticket_id, status: status, secret: secret}
     ZendeskService.expects(:activity).with(params)
     get '/zendesk', params
   end
