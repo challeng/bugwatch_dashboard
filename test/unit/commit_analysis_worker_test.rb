@@ -78,7 +78,7 @@ class CommitAnalysisWorkerTest < ActiveSupport::TestCase
 
   test "#perform subscribes user to repository" do
     User.stubs(:find_or_create_by_email).returns(user)
-    Subscription.expects(:find_or_create_by_repo_id_and_user_id).with(repo.id, user.id)
+    Subscription.expects(:find_or_create_by_repo_id_and_user_id).with(repo.id, user.id, :notify_on_analysis => false)
     sut.perform(repo_name, repo_url, commit.sha)
   end
 
