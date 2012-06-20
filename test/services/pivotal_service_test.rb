@@ -1,5 +1,5 @@
 require 'test_helper'
-require 'unit/support/pivotal_xml'
+require 'support/pivotal_xml'
 
 class PivotalServiceTest < ActiveSupport::TestCase
 
