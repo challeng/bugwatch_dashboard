@@ -1,3 +1,5 @@
+require 'api/pivotal_api'
+
 class PivotalService
 
   def self.activity(activity_data)
@@ -18,7 +20,7 @@ class PivotalService
     repo_name = repo_name_by_project_id(project_id)
     return unless repo_name
     repo = Repo.find_by_name! repo_name
-    doc = Nokogiri::XML get_stories_xml(project_id)
+    doc = Nokogiri::XML PivotalApi.defects(project_id)
     each_story(doc, repo, &method(:create_defect))
   rescue ActiveRecord::RecordNotFound
     nil
@@ -72,10 +74,6 @@ class PivotalService
       current_state = (story / "current_state").text
       block.call(current_state, repo, ticket_id, title)
     end
-  end
-
-  def self.get_stories_xml(project_id)
-    HTTParty.get("http://www.pivotaltracker.com/services/v3/projects/#{project_id}/stories?filter=type:bug")
   end
 
   def self.repo_name_by_project_id(project_id)

@@ -101,15 +101,14 @@ class PivotalServiceTest < ActiveSupport::TestCase
 
   test ".import gets stories from api" do
     AppConfig.stubs(:pivotal_projects).returns({repo.name => [PROJECT_ID]})
-    HTTParty.expects(:get).with("http://www.pivotaltracker.com/services/v3/projects/#{PROJECT_ID}/stories?filter=type:bug").
-        returns(PivotalXml.stories)
+    PivotalApi.expects(:defects).with(PROJECT_ID).returns(PivotalXml.stories)
     sut.import(PROJECT_ID)
   end
 
   test ".import finds or creates defect for unresolved story" do
     AppConfig.stubs(:pivotal_projects).returns({repo.name => [PROJECT_ID]})
     current_state = "started"
-    sut.stubs(:get_stories_xml).returns(
+    PivotalApi.stubs(:defects).returns(
         PivotalXml.stories(current_state: current_state, id: ticket_id, name: title, project_id: PROJECT_ID))
     sut.expects(:resolved?).with(current_state).returns(false)
     PivotalDefect.expects(:find_or_create_by_ticket_id_and_repo_id).with(
@@ -120,7 +119,7 @@ class PivotalServiceTest < ActiveSupport::TestCase
   test ".import finds or creates defect for resolved story" do
     AppConfig.stubs(:pivotal_projects).returns({repo.name => [PROJECT_ID]})
     current_state = "finished"
-    sut.stubs(:get_stories_xml).returns(
+    PivotalApi.stubs(:defects).returns(
         PivotalXml.stories(current_state: current_state, id: ticket_id, name: title, project_id: PROJECT_ID))
     sut.expects(:resolved?).with(current_state).returns(true)
     PivotalDefect.expects(:find_or_create_by_ticket_id_and_repo_id).with(
