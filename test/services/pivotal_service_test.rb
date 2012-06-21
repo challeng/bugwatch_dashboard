@@ -31,27 +31,27 @@ class PivotalServiceTest < ActiveSupport::TestCase
 
   test ".activity does not create pivotal defect if event type is not create" do
     activity = {"event_type" => "story_update"}
-    PivotalDefect.expects(:create!).never
+    PivotalDefect.expects(:find_or_create_by_ticket_id_and_repo_id).never
     sut.activity(activity)
   end
 
   test ".activity does not create pivotal defect if event type is create and story is not bug" do
     activity = {"event_type" => "story_create", "story_type" => "feature"}
-    PivotalDefect.expects(:create!).never
+    PivotalDefect.expects(:find_or_create_by_ticket_id_and_repo_id).never
     sut.activity(activity)
   end
 
   test ".activity does not create pivotal defect if project not configured" do
     activity = {"event_type" => "story_create", "story_type" => "bug", "project_id" => "999"}
     AppConfig.stubs(:pivotal_projects).returns({"repo_name" => [PROJECT_ID]})
-    PivotalDefect.expects(:create!).never
+    PivotalDefect.expects(:find_or_create_by_ticket_id_and_repo_id).never
     sut.activity(activity)
   end
 
   test ".activity does not create pivotal defect if repo doesnt exist" do
     activity = {"event_type" => "story_create", "story_type" => "bug", "project_id" => PROJECT_ID}
     AppConfig.stubs(:pivotal_projects).returns({"repo_does_not_exist" => [PROJECT_ID]})
-    PivotalDefect.expects(:create!).never
+    PivotalDefect.expects(:find_or_create_by_ticket_id_and_repo_id).never
     sut.activity(activity)
   end
 
@@ -128,13 +128,13 @@ class PivotalServiceTest < ActiveSupport::TestCase
   end
 
   test ".import does not get stories from api if project not configured" do
-    sut.expects(:get_stories_xml).never
+    PivotalApi.expects(:defects).never
     sut.import(9999938483)
   end
 
   test ".import does not get stories from api if project configured but repo not found" do
     AppConfig.stubs(:pivotal_projects).returns({"not the right repo name" => [PROJECT_ID]})
-    sut.expects(:get_stories_xml).never
+    PivotalApi.expects(:defects).never
     sut.import(PROJECT_ID)
   end
 

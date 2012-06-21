@@ -57,14 +57,14 @@ class ZendeskServiceTest < ActiveSupport::TestCase
   test ".activity does not create zendesk defect if zendesk not configured for repo" do
     AppConfig.unstub(:zendesk)
     AppConfig.stubs(:zendesk).returns({repo.name => {"secret" => "secret_doesnt_exist" }})
-    ZendeskDefect.expects(:create!).never
+    ZendeskDefect.expects(:find_or_create_by_ticket_id_and_repo_id).never
     sut.activity(get_activity)
   end
 
   test ".activity does not create zendesk defect if repo for secret not found" do
     AppConfig.unstub(:zendesk)
     AppConfig.stubs(:zendesk).returns({"repo_doesnt_exist" => {"secret" => secret}})
-    ZendeskDefect.expects(:create!).never
+    ZendeskDefect.expects(:find_or_create_by_ticket_id_and_repo_id).never
     sut.activity(get_activity)
   end
 
