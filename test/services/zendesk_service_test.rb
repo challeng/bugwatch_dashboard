@@ -74,14 +74,13 @@ class ZendeskServiceTest < ActiveSupport::TestCase
     organization = "test"
     AppConfig.stubs(:zendesk).returns({repo.name => {"secret" => secret, "username" => username, "token" => token,
                                                      "organization" => organization}})
-    HTTParty.expects(:get).with("https://#{organization}.zendesk.com/api/v2/tickets.json",
-                                :basic_auth => {:username => "#{username}/token", :password => token}).returns("{}")
+    ZendeskApi.expects(:tickets).with(username, token, organization).returns("{}")
     sut.import(secret)
   end
 
   test ".import finds or creates defect for problem tickets" do
     status = "open"
-    sut.expects(:get_tickets_json).returns(ZendeskJson.tickets(subject: title, id: ticket_id, status: status, priority: priority))
+    ZendeskApi.expects(:tickets).returns(ZendeskJson.tickets(subject: title, id: ticket_id, status: status, priority: priority))
     sut.expects(:resolve_status).with(status).returns(ZendeskDefect::OPEN)
     ZendeskDefect.expects(:find_or_create_by_ticket_id_and_repo_id).
         with(ticket_id.to_i, repo.id, title: title, status: ZendeskDefect::OPEN, priority: priority)
@@ -89,20 +88,20 @@ class ZendeskServiceTest < ActiveSupport::TestCase
   end
 
   test ".import ignores creating defects for non problem tickets" do
-    sut.expects(:get_tickets_json).returns(ZendeskJson.tickets(type: "feature"))
+    ZendeskApi.expects(:tickets).returns(ZendeskJson.tickets(type: "feature"))
     ZendeskDefect.expects(:find_or_create_by_ticket_id_and_repo_id).never
     sut.import(secret)
   end
 
   test ".import does not call api if repo not configured" do
     AppConfig.stubs(:zendesk).returns({repo.name => {"secret" => "not the right secret"}})
-    sut.expects(:get_tickets_json).never
+    ZendeskApi.expects(:tickets).never
     sut.import(secret)
   end
 
   test ".import does not call api if repo not found" do
     AppConfig.stubs(:zendesk).returns({"not the right repo name" => {"secret" => secret}})
-    sut.expects(:get_tickets_json).never
+    ZendeskApi.expects(:tickets).never
     sut.import(secret)
   end
 

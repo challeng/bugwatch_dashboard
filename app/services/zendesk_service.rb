@@ -1,3 +1,5 @@
+require 'api/zendesk_api'
+
 class ZendeskService
 
   class << self
@@ -24,7 +26,7 @@ class ZendeskService
       repo_name, config_data = repo_config_by_secret(secret)
       return unless repo_name
       repo = Repo.find_by_name! repo_name
-      json = JSON.load(get_tickets_json(config_data))
+      json = JSON.load(ZendeskApi.tickets(config_data["username"], config_data["token"], config_data["organization"]))
       tickets = json["tickets"] || []
       problem_ticket_data(tickets, repo, &method(:create_defect))
     rescue ActiveRecord::RecordNotFound
