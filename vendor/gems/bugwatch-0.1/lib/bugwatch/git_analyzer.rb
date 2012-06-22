@@ -23,7 +23,7 @@ module Bugwatch
     end
 
     def add(commit_sha)
-      commits(commit_sha).each do |commit|
+      commits(commit_sha, true).each do |commit|
         caching_strategy.store(commit)
       end
     end
@@ -32,9 +32,9 @@ module Bugwatch
       @caching_strategy ||= FileSystemCache.new(@repo_name)
     end
 
-    def commits(begin_sha)
+    def commits(begin_sha, follow_merge=false)
       Enumerator.new do |y|
-        filtered_commits(begin_sha).each do |commit|
+        filtered_commits(begin_sha, follow_merge).each do |commit|
           bugwatch_commit = Commit.new(commit)
           run_callbacks(bugwatch_commit)
           y << bugwatch_commit
@@ -44,11 +44,17 @@ module Bugwatch
 
     private
 
-    def filtered_commits(begin_sha)
+    def filtered_commits(begin_sha, follow_merge)
       Enumerator.new do |y|
         mine_for_commits(begin_sha).each do |commit|
           break if caching_strategy.commit_exists? commit.sha
-          y << commit unless merge_commit?(commit)
+          if merge_commit?(commit) && follow_merge
+            commit.parents.each do |parent|
+              filtered_commits(parent.sha, follow_merge).each {|c| y << c }
+            end
+          else
+            y << commit
+          end
         end
       end
     end
