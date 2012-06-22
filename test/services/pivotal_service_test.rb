@@ -5,12 +5,14 @@ class PivotalServiceTest < ActiveSupport::TestCase
 
   PROJECT_ID = "1"
 
-  attr_reader :sut, :ticket_id, :title
+  attr_reader :sut, :ticket_id, :title, :tracker_token
 
   def setup
     @sut = PivotalService
     @ticket_id = "123"
     @title = "title"
+    @tracker_token = "XXX"
+    AppConfig.stubs(:pivotal_projects).returns({repo.name => [{"token" => tracker_token, "id" => PROJECT_ID}]})
   end
 
   def repo
@@ -20,7 +22,6 @@ class PivotalServiceTest < ActiveSupport::TestCase
   test ".activity creates pivotal defect if event type is create and story is bug" do
     activity_description = "test"
     current_state = "started"
-    AppConfig.stubs(:pivotal_projects).returns({repo.name => [PROJECT_ID]})
     sut.stubs(:resolved_status).with(current_state).returns(PivotalDefect::OPEN)
     activity = {"event_type" => "story_create", "description" => activity_description, "story_type" => "bug",
                 "project_id" => PROJECT_ID, "id" => ticket_id, "story_name" => title, "current_state" => current_state}
@@ -42,8 +43,7 @@ class PivotalServiceTest < ActiveSupport::TestCase
   end
 
   test ".activity does not create pivotal defect if project not configured" do
-    activity = {"event_type" => "story_create", "story_type" => "bug", "project_id" => "999"}
-    AppConfig.stubs(:pivotal_projects).returns({"repo_name" => [PROJECT_ID]})
+    activity = {"event_type" => "story_create", "story_type" => "bug", "project_id" => "not the right project id"}
     PivotalDefect.expects(:find_or_create_by_ticket_id_and_repo_id).never
     sut.activity(activity)
   end
@@ -100,13 +100,11 @@ class PivotalServiceTest < ActiveSupport::TestCase
   end
 
   test ".import gets stories from api" do
-    AppConfig.stubs(:pivotal_projects).returns({repo.name => [PROJECT_ID]})
-    PivotalApi.expects(:defects).with(PROJECT_ID).returns(PivotalXml.stories)
+    PivotalApi.expects(:defects).with(PROJECT_ID, tracker_token).returns(PivotalXml.stories)
     sut.import(PROJECT_ID)
   end
 
   test ".import finds or creates defect for unresolved story" do
-    AppConfig.stubs(:pivotal_projects).returns({repo.name => [PROJECT_ID]})
     current_state = "started"
     PivotalApi.stubs(:defects).returns(
         PivotalXml.stories(current_state: current_state, id: ticket_id, name: title, project_id: PROJECT_ID))
@@ -117,7 +115,6 @@ class PivotalServiceTest < ActiveSupport::TestCase
   end
 
   test ".import finds or creates defect for resolved story" do
-    AppConfig.stubs(:pivotal_projects).returns({repo.name => [PROJECT_ID]})
     current_state = "finished"
     PivotalApi.stubs(:defects).returns(
         PivotalXml.stories(current_state: current_state, id: ticket_id, name: title, project_id: PROJECT_ID))
