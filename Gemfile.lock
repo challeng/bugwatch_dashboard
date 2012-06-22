@@ -242,6 +242,7 @@ DEPENDENCIES
   json (= 1.6.1)
   mocha
   mysql2 (= 0.3.10)
+  nokogiri
   rack-openid
   rails (= 3.2.2)
   rake
