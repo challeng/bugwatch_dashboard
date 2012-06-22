@@ -3,7 +3,7 @@ require 'exception_source'
 
 class ExceptionSourceTest < ActiveSupport::TestCase
 
-  PROJECT_ID = 1111
+  PROJECT_ID = 123
   API_KEY = "api"
   ACCOUNT = "test"
   DEPLOY_XML = <<-XML
@@ -47,23 +47,40 @@ class ExceptionSourceTest < ActiveSupport::TestCase
 </projects>
   XML
 
+  def repo
+    @repo ||= repos(:test_repo)
+  end
+
+  attr_reader :sut
+
   def setup
-    AppConfig.stubs(:exceptions).returns({"airbrake" => {"account" => ACCOUNT, "api_key" => API_KEY}})
+    @sut = ExceptionSource
+    AppConfig.stubs(:exceptions).returns({repo.name => {"account" => ACCOUNT, "api_key" => API_KEY, "id" => PROJECT_ID}})
   end
 
-  test ".deploy_before gets deploys from airbrake" do
-    HTTParty.expects(:get).with("http://#{ACCOUNT}.airbrake.io/projects/#{PROJECT_ID}/deploys.xml", :query => {:api_key => API_KEY}).returns("")
-    ExceptionSource.deploy_before("sha", :project_id => PROJECT_ID)
+  test ".deploys gets deploys from airbrake" do
+    response = stub
+    response.expects(:body).returns("")
+    HTTParty.expects(:get).with("http://#{ACCOUNT}.airbrake.io/projects/#{PROJECT_ID}/deploys.xml",
+                                :query => {:api_key => API_KEY}).returns(response)
+    sut.deploys(PROJECT_ID)
   end
 
-  test ".deploy_before raises exception if no airbrake configuration" do
-    AppConfig.stubs(:exceptions).returns(nil)
-    assert_raises(ExceptionSource::ExceptionMisconfiguration) { ExceptionSource.deploy_before("sha") }
+  test ".deploys parses response with nokogiri" do
+    sut.expects(:get).returns(DEPLOY_XML)
+    doc = Nokogiri::XML DEPLOY_XML
+    Nokogiri.expects(:XML).with(DEPLOY_XML).returns(doc)
+    sut.deploys(PROJECT_ID)
+  end
+
+  test ".deploys raises exception if project not configured" do
+    AppConfig.stubs(:exceptions).returns({repo.name => {"account" => ACCOUNT, "id" => "not the right project"}})
+    assert_raises(ExceptionSource::ExceptionMisconfiguration) { sut.deploys(PROJECT_ID) }
   end
 
   test ".deploy_before returns deploy sha after given sha" do
-    HTTParty.expects(:get).returns(DEPLOY_XML)
-    assert_equal "second_sha", ExceptionSource.deploy_before("sha")
+    sut.expects(:get).returns(DEPLOY_XML)
+    assert_equal "second_sha", ExceptionSource.deploy_before("sha", PROJECT_ID)
   end
 
 end
