@@ -55,7 +55,7 @@ Then /^I should have the following open zendesk defects:$/ do |table|
 end
 
 When /^the repository "([^"]*)" has a pivotal project id "([^"]*)"$/ do |repo_name, project_id|
-  PivotalService.stubs(:config).returns({repo_name => [project_id]})
+  PivotalService.stubs(:config).returns({repo_name => [{"id" => project_id}]})
 end
 
 When /^the repository "([^"]*)" has a zendesk identifier "([^"]*)"$/ do |repo_name, zendesk_id|
