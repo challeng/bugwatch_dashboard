@@ -6,3 +6,27 @@ pivotal_open:
   ticket_id: 987
   status: 0
   type: PivotalDefect
+
+pivotal:
+  priority: high
+  title: defect
+  ticket_id: 111
+  status: 0
+  type: PivotalDefect
+  repo: test_repo
+
+#jira:
+#  priority: high
+#  title: defect
+#  ticket_id: 111
+#  status: 0
+#  type: JiraDefect
+#  repo: test_repo
+
+zendesk:
+  priority: high
+  title: defect
+  ticket_id: 111
+  status: 0
+  type: ZendeskDefect
+  repo: test_repo

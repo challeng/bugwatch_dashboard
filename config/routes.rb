@@ -14,6 +14,7 @@ BugwatchDashboard::Application.routes.draw do
   resources :repos do
     resources :alerts
     resources :tags, :only => [:index, :show]
+    resources :defects, :only => [:index]
     controller :tags do
       post :diff
     end
