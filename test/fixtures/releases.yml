@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  repo: 
+  sha: MyString
+  deploy_date: 2012-07-09 12:40:13
+  env: MyString
+
+two:
+  repo: 
+  sha: MyString
+  deploy_date: 2012-07-09 12:40:13
+  env: MyString

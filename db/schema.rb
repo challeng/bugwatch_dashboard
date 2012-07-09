@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120611174746) do
+ActiveRecord::Schema.define(:version => 20120709184013) do
 
   create_table "alerts", :force => true do |t|
     t.integer  "commit_id"
@@ -75,6 +75,17 @@ ActiveRecord::Schema.define(:version => 20120611174746) do
     t.datetime "created_at",     :null => false
     t.datetime "updated_at",     :null => false
   end
+
+  create_table "releases", :force => true do |t|
+    t.integer  "repo_id"
+    t.string   "sha"
+    t.datetime "deploy_date"
+    t.string   "env"
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+  end
+
+  add_index "releases", ["repo_id"], :name => "index_releases_on_repo_id"
 
   create_table "repos", :force => true do |t|
     t.string   "name"
