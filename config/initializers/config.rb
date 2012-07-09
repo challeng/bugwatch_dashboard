@@ -12,6 +12,7 @@ end
 AppConfig.mailer = get_config("mailer.yml", {})
 AppConfig.git_domains = get_config("git_domains.yml", [])
 AppConfig.file_changes = get_config("file_change.yml", {})
+AppConfig.exceptions = get_config("exceptions.yml", {})
 AppConfig.pivotal_projects = get_config("pivotal_projects", {})
 AppConfig.zendesk = get_config("zendesk", {})
 
