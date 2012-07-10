@@ -3,7 +3,7 @@ require 'test_helper'
 class RepoTest < ActiveSupport::TestCase
 
   def sut
-    @sut ||= Repo.new(:name => "test_repo", :url => "https://domain/path/to/repo")
+    @sut ||= Repo.new(name: "test_repo", url: "https://domain/path/to/repo")
   end
 
   attr_reader :git_analyzer
