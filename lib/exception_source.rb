@@ -1,8 +1,6 @@
 require 'nokogiri'
 
 class ExceptionSource
-
-  class ExceptionMisconfiguration < Exception; end
   
   class << self
 
@@ -12,7 +10,7 @@ class ExceptionSource
     end
   
     def deploys(project_id)
-      _, config_data = repo_name_and_config_by_project_id(project_id)
+      _, config_data = ExceptionSourceConfig.repo_name_and_config_by_project_id(project_id)
       xml_response = get("projects/#{project_id}/deploys.xml", config_data)
       doc = Nokogiri::XML(xml_response)
       (doc / "deploy").map do |deploy_xml|
@@ -53,14 +51,6 @@ class ExceptionSource
         end
       end
     end
-
-    def repo_name_and_config_by_project_id(project_id)
-      config.each do |(repo_name, config_data)|
-        return repo_name, config_data if config_data["id"] == project_id
-      end
-      raise ExceptionMisconfiguration, "Airbrake project not configured. ID: #{project_id}"
-    end
-
 
   end
 

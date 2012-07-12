@@ -1,4 +1,4 @@
-ENV["RAILS_ENV"] = "test"
+require 'fast_test_helper'
 require File.expand_path('../../config/environment', __FILE__)
 require 'rails/test_help'
 

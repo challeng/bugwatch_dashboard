@@ -59,5 +59,5 @@ When /^the repository "([^"]*)" has a pivotal project id "([^"]*)"$/ do |repo_na
 end
 
 When /^the repository "([^"]*)" has a zendesk identifier "([^"]*)"$/ do |repo_name, zendesk_id|
-  ZendeskService.stubs(:config).returns({repo_name => {"secret" => zendesk_id}})
+  ZendeskConfig.stubs(:config).returns({repo_name => {"secret" => zendesk_id}})
 end

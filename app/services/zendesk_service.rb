@@ -8,7 +8,7 @@ class ZendeskService
     CLOSED_STATUSES = %w(solved)
 
     def activity(activity_data)
-      target_repo, _ = repo_config_by_secret(activity_data["secret"])
+      target_repo, _ = ZendeskConfig.repo_config_by_secret(activity_data["secret"])
       return unless target_repo
       ticket_id = activity_data["id"]
       repo = Repo.find_by_name! target_repo
@@ -23,7 +23,7 @@ class ZendeskService
     end
 
     def import(secret)
-      repo_name, config_data = repo_config_by_secret(secret)
+      repo_name, config_data = ZendeskConfig.repo_config_by_secret(secret)
       return unless repo_name
       repo = Repo.find_by_name! repo_name
       json = JSON.load(ZendeskApi.tickets(config_data["username"], config_data["token"], config_data["organization"]))
@@ -31,10 +31,6 @@ class ZendeskService
       problem_ticket_data(tickets, repo, &method(:create_defect))
     rescue ActiveRecord::RecordNotFound
       nil
-    end
-
-    def config
-      AppConfig.zendesk
     end
 
     private
@@ -60,13 +56,6 @@ class ZendeskService
 
     def resolved?(status)
       CLOSED_STATUSES.include? status.downcase
-    end
-
-    def repo_config_by_secret(secret)
-      config.each do |repo_name, config_data|
-        return repo_name, config_data if config_data["secret"] == secret
-      end
-      nil
     end
 
     def problem_ticket_data(tickets, repo, &block)

@@ -75,11 +75,6 @@ class ExceptionSourceTest < ActiveSupport::TestCase
     assert_equal [first_deploy, second_deploy, third_deploy], sut.deploys(PROJECT_ID)
   end
 
-  test ".deploys raises exception if project not configured" do
-    AppConfig.stubs(:exceptions).returns({repo.name => {"account" => ACCOUNT, "id" => "not the right project"}})
-    assert_raises(ExceptionSource::ExceptionMisconfiguration) { sut.deploys(PROJECT_ID) }
-  end
-
   test ".deploy_before returns deploy sha after given sha" do
     sut.expects(:get).returns(DEPLOY_XML)
     assert_equal "second_sha", ExceptionSource.deploy_before("sha", PROJECT_ID)
