@@ -1,0 +1,67 @@
+<script type="text/javascript">
+  var chart;
+  $(document).ready(function() {
+      chart = new Highcharts.Chart({
+          chart: {
+              renderTo: 'zendesk_defects',
+              defaultSeriesType: 'column',
+              plotBackgroundImage: null,
+              marginRight: 130,
+              marginBottom: 25
+          },
+          title: {
+              text: 'Zendesk Defects by Release',
+              x: -20
+          },
+          yAxis: {
+              title: {
+                  text: '# of Defects'
+              },
+              plotLines: [{
+                  value: 0,
+                  width: 1,
+                  color: '#808080'
+              }]
+          },
+          xAxis: {
+              categories: <%= @releases.map(&:deploy_date).map(&:to_s).to_s.html_safe %>,
+              labels: {
+                  enabled: true
+              }
+          },
+          tooltip: {
+              formatter: function() {
+                      return '<b>'+ this.x +'</b><br />'
+                              + this.series.name + '<br />Complexity: ' + this.y;
+              }
+          },
+          plotOptions: {
+              series: {
+                  cursor: 'pointer',
+                  point: {
+                      events: {
+                          click: function() {
+                              // nothing
+                          }
+                      }
+                  },
+                  marker: {
+                      lineWidth: 1
+                  }
+              }
+          },
+          legend: {
+              enabled: true,
+              layout: 'vertical',
+              align: 'top',
+              verticalAlign: 'top',
+              x: -10,
+              y: -10,
+              borderWidth: 0
+          },
+          series: <%= graph_grouped_values(@releases, defects).to_s.html_safe %>
+      });
+  });
+
+</script>
+<div id="zendesk_defects"></div>
