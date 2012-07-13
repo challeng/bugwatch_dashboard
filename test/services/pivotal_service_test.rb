@@ -12,7 +12,7 @@ class PivotalServiceTest < ActiveSupport::TestCase
     @ticket_id = "123"
     @title = "title"
     @tracker_token = "XXX"
-    AppConfig.stubs(:pivotal_projects).returns({repo.name => [{"token" => tracker_token, "id" => PROJECT_ID}]})
+    AppConfig.stubs(:pivotal).returns({repo.name => [{"token" => tracker_token, "id" => PROJECT_ID}]})
   end
 
   def repo
@@ -50,7 +50,7 @@ class PivotalServiceTest < ActiveSupport::TestCase
 
   test ".activity does not create pivotal defect if repo doesnt exist" do
     activity = {"event_type" => "story_create", "story_type" => "bug", "project_id" => PROJECT_ID}
-    AppConfig.stubs(:pivotal_projects).returns({"repo_does_not_exist" => [PROJECT_ID]})
+    AppConfig.stubs(:pivotal).returns({"repo_does_not_exist" => [PROJECT_ID]})
     PivotalDefect.expects(:find_or_create_by_ticket_id_and_repo_id).never
     sut.activity(activity)
   end
@@ -130,7 +130,7 @@ class PivotalServiceTest < ActiveSupport::TestCase
   end
 
   test ".import does not get stories from api if project configured but repo not found" do
-    AppConfig.stubs(:pivotal_projects).returns({"not the right repo name" => [PROJECT_ID]})
+    AppConfig.stubs(:pivotal).returns({"not the right repo name" => [PROJECT_ID]})
     PivotalApi.expects(:defects).never
     sut.import(PROJECT_ID)
   end

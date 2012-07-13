@@ -7,11 +7,11 @@ class PivotalApiTest < Test::Unit::TestCase
     sut = PivotalApi
     project_id = 999
     token = "XXX"
-    response = "yay response"
-    HTTParty.expects(:get).with("http://www.pivotaltracker.com/services/v3/projects/#{project_id}/stories?filter=type:bug",
+    response = stub("Response", :body => "yay response")
+    HTTParty.expects(:get).with("https://www.pivotaltracker.com/services/v3/projects/#{project_id}/stories?filter=type:bug",
                                 {"X-TrackerToken" => token}).returns(response)
     result = sut.defects(project_id, token)
-    assert_equal response, result
+    assert_equal "yay response", result
   end
 
 end

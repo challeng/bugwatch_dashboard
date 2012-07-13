@@ -27,7 +27,7 @@ class PivotalService
   end
 
   def self.config
-    AppConfig.pivotal_projects
+    AppConfig.pivotal
   end
 
   def self.resolved?(status_phrase)
