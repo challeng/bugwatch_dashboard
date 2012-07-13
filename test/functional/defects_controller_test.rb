@@ -20,8 +20,8 @@ class DefectsControllerTest < ActionController::TestCase
     assert_equal [defects(:zendesk)], assigns(:zendesk_defects)
   end
 
-  test "GET#index retrieves releases for repo" do
-    release = repo.releases.create! deploy_date: DateTime.now
+  test "GET#index retrieves production releases for repo" do
+    release = repo.releases.create! deploy_date: DateTime.now, env: "production"
     get :index, {:repo_id => repo.id}
     assert_equal [release], assigns(:releases)
   end

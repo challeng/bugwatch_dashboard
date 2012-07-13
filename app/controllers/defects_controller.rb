@@ -5,7 +5,7 @@ class DefectsController < ApplicationController
   def index
     @pivotal_defects = @repo.pivotal_defects
     @zendesk_defects = @repo.zendesk_defects
-    @releases = @repo.releases
+    @releases = @repo.releases.production.order("deploy_date ASC").limit(10)
   end
 
 end
