@@ -17,17 +17,13 @@ class PivotalService
   end
 
   def self.import(project_id)
-    repo_name, token = repo_name_and_token_by_project_id(project_id)
+    repo_name, token = PivotalConfig.repo_name_and_token_by_project_id(project_id)
     return unless repo_name
     repo = Repo.find_by_name! repo_name
     doc = Nokogiri::XML PivotalApi.defects(project_id, token)
     each_story(doc, repo, &method(:create_defect))
   rescue ActiveRecord::RecordNotFound
     nil
-  end
-
-  def self.config
-    AppConfig.pivotal
   end
 
   def self.resolved?(status_phrase)
@@ -41,7 +37,7 @@ class PivotalService
   private
 
   def self.create(project_id, ticket_id, title, current_state)
-    repo_name, _ = repo_name_and_token_by_project_id(project_id)
+    repo_name, _ = PivotalConfig.repo_name_and_token_by_project_id(project_id)
     if repo_name
       repo = Repo.find_by_name! repo_name
       create_defect(current_state, repo, ticket_id, title)
@@ -74,14 +70,6 @@ class PivotalService
       current_state = (story / "current_state").text
       block.call(current_state, repo, ticket_id, title)
     end
-  end
-
-  def self.repo_name_and_token_by_project_id(project_id)
-    config.each do |(repo_name, config_data)|
-      project_config_data = config_data.find {|data| data["id"] == project_id}
-      return repo_name, project_config_data["token"] if project_config_data
-    end
-    nil
   end
 
 end

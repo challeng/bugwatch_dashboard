@@ -10,8 +10,8 @@ class ZendeskDefectWorkerTest < ActiveSupport::TestCase
     @secret = "secret"
     @data = {"secret" => secret}
     @repo_name = "repo_name"
-    ExceptionSourceConfig.expects(:project_id_by_repo_name).with(repo_name).returns(project_id)
-    ZendeskConfig.expects(:repo_config_by_secret).with(secret).returns([repo_name, {}])
+    ExceptionSourceConfig.stubs(:project_id_by_repo_name).with(repo_name).returns(project_id)
+    ZendeskConfig.stubs(:repo_config_by_secret).with(secret).returns([repo_name, {}])
   end
 
   test ".perform updates releases for repo" do
