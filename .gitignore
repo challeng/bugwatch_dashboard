@@ -15,8 +15,9 @@
 /config/mailer.yml
 /config/git_domains.yml
 /config/file_change.yml
-/config/exceptions.yml
-/config/pivotal.yml
+/config/services/exceptions.yml
+/config/services/pivotal.yml
+/config/services/zendesk.yml
 
 # Ignore all logfiles and tempfiles.
 /log/*.log

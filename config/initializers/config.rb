@@ -18,7 +18,7 @@ AppConfig.git_domains = get_config("git_domains.yml", [])
 AppConfig.file_changes = get_config("file_change.yml", {})
 AppConfig.exceptions = get_config("services/exceptions.yml", {})
 AppConfig.pivotal = get_config("services/pivotal.yml", {})
-AppConfig.zendesk = get_config("services/zendesk", {})
+AppConfig.zendesk = get_config("services/zendesk.yml", {})
 
 if defined? ActionMailer
   ActionMailer::Base.smtp_settings = {
