@@ -27,9 +27,9 @@ class ExceptionSource
     private
   
     def get(path, config, options={})
-      full_path = "http://#{config["account"]}.airbrake.io/#{path}"
+      full_path = "https://#{config["account"]}.airbrake.io/#{path}"
       options[:query] ||= {}
-      options[:query][:api_key] = config["api_key"]
+      options[:query][:auth_token] = config["api_key"]
       HTTParty.get(full_path, options).body
     end
   

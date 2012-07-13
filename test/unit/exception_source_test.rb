@@ -62,8 +62,8 @@ class ExceptionSourceTest < ActiveSupport::TestCase
   test ".deploys gets deploys from airbrake" do
     response = stub
     response.expects(:body).returns("")
-    HTTParty.expects(:get).with("http://#{ACCOUNT}.airbrake.io/projects/#{PROJECT_ID}/deploys.xml",
-                                :query => {:api_key => API_KEY}).returns(response)
+    HTTParty.expects(:get).with("https://#{ACCOUNT}.airbrake.io/projects/#{PROJECT_ID}/deploys.xml",
+                                :query => {:auth_token => API_KEY}).returns(response)
     sut.deploys(PROJECT_ID)
   end
 
