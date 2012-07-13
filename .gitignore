@@ -16,6 +16,7 @@
 /config/git_domains.yml
 /config/file_change.yml
 /config/exceptions.yml
+/config/pivotal.yml
 
 # Ignore all logfiles and tempfiles.
 /log/*.log
