@@ -5,6 +5,7 @@ class DefectsController < ApplicationController
   def index
     @pivotal_defects = @repo.pivotal_defects
     @zendesk_defects = @repo.zendesk_defects
+    @releases = @repo.releases
   end
 
 end

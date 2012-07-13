@@ -40,9 +40,10 @@ class ZendeskService
       status = activity_data["status"]
       priority = activity_data["priority"]
       title = activity_data["subject"]
+      date = activity_data["created_at"]
       resolved_status = resolve_status(status)
       ZendeskDefect.find_or_create_by_ticket_id_and_repo_id(
-          ticket_id, repo.id, priority: priority, title: title, status: resolved_status)
+          ticket_id, repo.id, priority: priority, title: title, status: resolved_status, date: date)
     end
 
     def update_defect(existing_ticket, activity_data)

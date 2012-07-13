@@ -3,7 +3,7 @@ require 'support/zendesk_json'
 
 class ZendeskServiceTest < ActiveSupport::TestCase
 
-  attr_reader :ticket_id, :priority, :title, :status, :secret, :sut
+  attr_reader :ticket_id, :priority, :title, :status, :secret, :sut, :created_date
 
   def setup
     @ticket_id = "1"
@@ -12,6 +12,7 @@ class ZendeskServiceTest < ActiveSupport::TestCase
     @status = "New"
     @secret = "repo_identifier"
     @sut = ZendeskService
+    @created_date = DateTime.new(2010, 10, 10).to_s
     AppConfig.stubs(:zendesk).returns({repo.name => {"secret" => secret}})
   end
 
@@ -21,30 +22,30 @@ class ZendeskServiceTest < ActiveSupport::TestCase
 
   def get_activity(opts={})
     {"id" => (opts["id"] || ticket_id), "priority" => (opts["priority"] || priority), "subject" => (opts["title"] || title),
-     "status" => (opts["status"] || status), "secret" => (opts["secret"] || secret)}
+     "status" => (opts["status"] || status), "secret" => (opts["secret"] || secret), "created_at" => created_date}
   end
 
   test ".activity creates new open zendesk defect for new issues" do
     ZendeskDefect.expects(:find_or_create_by_ticket_id_and_repo_id).
-        with(ticket_id, repo.id, priority: priority, title: title, status: ZendeskDefect::OPEN)
+        with(ticket_id, repo.id, priority: priority, title: title, date: created_date, status: ZendeskDefect::OPEN)
     sut.activity(get_activity)
   end
 
   test ".activity creates new open zendesk defect for open issues" do
     ZendeskDefect.expects(:find_or_create_by_ticket_id_and_repo_id).
-            with(ticket_id, repo.id, priority: priority, title: title, status: ZendeskDefect::OPEN)
+            with(ticket_id, repo.id, priority: priority, title: title, date: created_date, status: ZendeskDefect::OPEN)
     sut.activity(get_activity("status" => "Open"))
   end
 
   test ".activity creates new open zendesk defect for pending issues" do
     ZendeskDefect.expects(:find_or_create_by_ticket_id_and_repo_id).
-            with(ticket_id, repo.id, priority: priority, title: title, status: ZendeskDefect::OPEN)
+            with(ticket_id, repo.id, priority: priority, title: title, date: created_date, status: ZendeskDefect::OPEN)
     sut.activity(get_activity("status" => "Pending"))
   end
 
   test ".activity creates new closed zendesk defect for solved issues" do
     ZendeskDefect.expects(:find_or_create_by_ticket_id_and_repo_id).
-            with(ticket_id, repo.id, priority: priority, title: title, status: ZendeskDefect::CLOSED)
+            with(ticket_id, repo.id, priority: priority, title: title, date: created_date, status: ZendeskDefect::CLOSED)
     sut.activity(get_activity("status" => "Solved"))
   end
 
@@ -80,10 +81,11 @@ class ZendeskServiceTest < ActiveSupport::TestCase
 
   test ".import finds or creates defect for problem tickets" do
     status = "open"
-    ZendeskApi.expects(:tickets).returns(ZendeskJson.tickets(subject: title, id: ticket_id, status: status, priority: priority))
+    ZendeskApi.expects(:tickets).returns(ZendeskJson.tickets(subject: title, id: ticket_id, status: status,
+                                                             priority: priority, created_at: created_date))
     sut.expects(:resolve_status).with(status).returns(ZendeskDefect::OPEN)
     ZendeskDefect.expects(:find_or_create_by_ticket_id_and_repo_id).
-        with(ticket_id.to_i, repo.id, title: title, status: ZendeskDefect::OPEN, priority: priority)
+        with(ticket_id.to_i, repo.id, title: title, date: created_date, status: ZendeskDefect::OPEN, priority: priority)
     sut.import(secret)
   end
 

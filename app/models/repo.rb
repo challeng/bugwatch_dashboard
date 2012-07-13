@@ -10,6 +10,7 @@ class Repo < ActiveRecord::Base
   has_many :bug_fixes, :through => :commits
   has_many :pivotal_defects
   has_many :zendesk_defects
+  has_many :releases
 
   REPO_DIR = "repos"
 

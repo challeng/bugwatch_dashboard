@@ -13,7 +13,7 @@ class ZendeskJson
          "via":{
             "channel":"web"
          },
-         "created_at":"2012-06-06T19:07:14Z",
+         "created_at": "#{opts[:created_at] || "2012-06-06T19:07:14Z"}",
          "updated_at":"2012-06-18T18:33:19Z",
          "type":"#{opts[:type] || "problem"}",
          "subject":"#{opts[:subject] || "Issue with something"}",

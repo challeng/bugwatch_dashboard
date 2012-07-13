@@ -18,6 +18,14 @@ class Defect < ActiveRecord::Base
     update_attribute(:status, ARCHIVED)
   end
 
+  def open?
+    self.status == OPEN
+  end
+
+  def closed?
+    self.status == CLOSED
+  end
+
   def priority=(priority)
     self[:priority] = priority.downcase if priority
   end

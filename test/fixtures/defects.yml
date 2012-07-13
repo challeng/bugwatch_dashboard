@@ -6,6 +6,7 @@ pivotal_open:
   ticket_id: 987
   status: 0
   type: PivotalDefect
+  date: 2010-10-10
 
 pivotal:
   priority: high
@@ -14,6 +15,7 @@ pivotal:
   status: 0
   type: PivotalDefect
   repo: test_repo
+  date: 2010-10-10
 
 #jira:
 #  priority: high
@@ -30,3 +32,4 @@ zendesk:
   status: 0
   type: ZendeskDefect
   repo: test_repo
+  date: 2010-10-10
