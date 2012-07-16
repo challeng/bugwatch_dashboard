@@ -3,7 +3,7 @@ require 'exception_worker'
 
 class ExceptionWorkerTest < ActiveSupport::TestCase
 
-  attr_reader :repo_name, :exception_type, :backtrace, :deploy_sha, :repo, :deploy_before_last_sha
+  attr_reader :repo_name, :exception_type, :backtrace, :deploy_sha, :repo, :deploy_before_last_sha, :project_id
 
   def setup
     @repo_name = "repo_name"
@@ -12,8 +12,10 @@ class ExceptionWorkerTest < ActiveSupport::TestCase
     @deploy_sha = "AAA"
     @repo = stub("Repo", :git_analyzer => stub("Bugwatch::GitAnalyzer"))
     @deploy_before_last_sha = "ZZZ"
+    @project_id = 123
     Repo.expects(:find_by_name!).with(repo_name).returns(repo)
-    ExceptionSource.stubs(:deploy_before).with(deploy_sha).returns(deploy_before_last_sha)
+    ExceptionSourceConfig.stubs(:project_id_by_repo_name).with(repo_name).returns(project_id)
+    ExceptionSource.stubs(:deploy_before).with(deploy_sha, project_id).returns(deploy_before_last_sha)
   end
 
   test "#perform selects commits using exception tracker" do
@@ -46,10 +48,20 @@ class ExceptionWorkerTest < ActiveSupport::TestCase
     bugwatch_commit1, bugwatch_commit2 = stub("Bugwatch::Commit", :sha => "commit_sha"),
         stub("Bugwatch::Commit", :sha => "second_commit_sha")
     Bugwatch::ExceptionTracker.expects(:discover).returns([bugwatch_commit1, bugwatch_commit2])
-    Commit.expects(:find_by_sha!).with("commit_sha").returns(commit)
-    Commit.expects(:find_by_sha!).with("second_commit_sha").returns(commit2)
+    Commit.expects(:find_by_sha).with(bugwatch_commit1.sha).returns(commit)
+    Commit.expects(:find_by_sha).with(bugwatch_commit2.sha).returns(commit2)
     Clue.expects(:create!).with(commit: commit, mystery: mystery)
     Clue.expects(:create!).with(commit: commit2, mystery: mystery)
+    ExceptionWorker.perform(repo_name, exception_type, backtrace, deploy_sha)
+  end
+
+  test "#perform does not create clue if commit doesnt exist" do
+    bugwatch_commit1, bugwatch_commit2 = stub("Bugwatch::Commit", :sha => "commit_sha"),
+        stub("Bugwatch::Commit", :sha => "second_commit_sha")
+    Bugwatch::ExceptionTracker.expects(:discover).returns([bugwatch_commit1, bugwatch_commit2])
+    Commit.expects(:find_by_sha).with(bugwatch_commit1.sha).returns(nil)
+    Commit.expects(:find_by_sha).with(bugwatch_commit2.sha).returns(stub)
+    Clue.expects(:create!).once
     ExceptionWorker.perform(repo_name, exception_type, backtrace, deploy_sha)
   end
 
