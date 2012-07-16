@@ -1,6 +1,6 @@
 class ExceptionSourceConfig
 
-  class ExceptionMisconfiguration < Exception; end
+  class ExceptionMisconfiguration < StandardError; end
 
   def self.project_id_by_repo_name(repo_name)
     repo_config = config[repo_name]
