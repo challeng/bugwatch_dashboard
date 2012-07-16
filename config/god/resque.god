@@ -1,7 +1,7 @@
 rails_env   = ENV['RAILS_ENV']  || "production"
 rails_root  = ENV['RAILS_ROOT'] || "/var/groupon/fixcache/current"
 
-num_workers = 1
+queues = %w(analysis)
 
 God.contact(:email) do |c|
   c.name = 'Jacob'
@@ -9,16 +9,16 @@ God.contact(:email) do |c|
   c.to_email = 'jacobr@groupon.com'
 end
 
-num_workers.times do |num|
+queues.each do |queue|
   God.watch do |w|
-    w.name     = "resque-worker-#{num}"
+    w.name     = "resque-worker-#{queue}"
     w.group    = 'resque'
     w.interval = 30.seconds
     w.dir = rails_root
     # w.start_grace   = 60.seconds
     # w.restart_grace = 60.seconds
     
-    w.env      = { "QUEUE" => "*", 
+    w.env      = { "QUEUE" => queue,
                    "RAILS_ENV" => rails_env }
     
     w.start    = "bundle exec rake -f #{rails_root}/Rakefile environment resque:work"
