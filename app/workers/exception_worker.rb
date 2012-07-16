@@ -3,6 +3,8 @@ require 'exception_source'
 
 class ExceptionWorker
 
+  @queue = :exceptions
+
   class << self
 
     def perform(repo_name, exception_type, exception_backtrace, deploy_sha)

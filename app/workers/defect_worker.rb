@@ -1,5 +1,7 @@
 class DefectWorker
 
+  @queue = :defects
+
   class << self
 
     def perform(*args)

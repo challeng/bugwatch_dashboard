@@ -4,6 +4,9 @@ require 'commit_analyzer'
 require 'file_change_analyzer'
 
 class CommitAnalysisWorker
+
+  @queue = :analysis
+
   class << self
 
     def perform(repo_name, repo_url, commit_sha)

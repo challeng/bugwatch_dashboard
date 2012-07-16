@@ -9,7 +9,7 @@ class ZendeskHook < Sinatra::Base
       ticket_id = params['id']
       status = params['status']
       secret = params['secret']
-      ZendeskService.activity(priority: priority, subject: subject, id: ticket_id, status: status, secret: secret)
+      Resque.enqueue(ZendeskDefectWorker, priority: priority, subject: subject, id: ticket_id, status: status, secret: secret)
     rescue Exception => e
       Rails.logger.error e
     end

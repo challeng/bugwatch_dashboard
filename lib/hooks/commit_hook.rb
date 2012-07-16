@@ -8,8 +8,7 @@ class CommitHook < Sinatra::Base
     commits = payload['commits']
     if valid_data?(repository, commits) && payload['ref'] == "refs/heads/master"
       commits.each do |commit|
-        Resque::Job.create(repository['name'].to_sym, CommitAnalysisWorker,
-                           repository['name'], repository['url'], commit['id'])
+        Resque.enqueue(CommitAnalysisWorker, repository['name'], repository['url'], commit['id'])
       end
     end
     "OK"
