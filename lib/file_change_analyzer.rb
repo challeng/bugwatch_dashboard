@@ -7,7 +7,7 @@ class FileChangeAnalyzer
   def call(commit)
     config.each do |_, group|
       files_to_email = file_changes(commit.files, group['files'])
-      NotificationMailer.file_change(files_to_email, group['emails']).deliver unless files_to_email.empty?
+      NotificationMailer.file_change(files_to_email, group['emails'], commit).deliver unless files_to_email.empty?
     end
   end
 
