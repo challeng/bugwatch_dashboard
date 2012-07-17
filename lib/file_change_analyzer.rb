@@ -1,18 +1,20 @@
 class FileChangeAnalyzer
 
-  def initialize(repo_name)
-    @repo_name = repo_name
+  attr_reader :repo
+
+  def initialize(repo)
+    @repo = repo
   end
 
   def call(commit)
     config.each do |_, group|
       files_to_email = file_changes(commit.files, group['files'])
-      NotificationMailer.file_change(files_to_email, group['emails'], commit).deliver unless files_to_email.empty?
+      NotificationMailer.file_change(files_to_email, group['emails'], commit, @repo).deliver unless files_to_email.empty?
     end
   end
 
   def config
-    AppConfig.file_changes[@repo_name] || {}
+    AppConfig.file_changes[@repo.name] || {}
   end
 
   private
