@@ -17,7 +17,7 @@ class NotificationMailer < ActionMailer::Base
   end
 
   def file_change(files_to_email, email_addresses, commit)
-    @sha = commit.sha
+    @commit = commit
     @file_names = files_to_email
     mail(:to => email_addresses, :subject => "Files were changed in the latest commit")
   end
