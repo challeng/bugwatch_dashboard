@@ -1,10 +1,11 @@
-group1:
-  emails:
-  	- test@example.com
-  files:
-  	- test.rb
- group2:
-   emails:
-  	 - test2@example.com
-   files:
-  	 - test_file.rb
+repo_name:
+  group1:
+    emails:
+      - test@example.com
+    files:
+      - test.rb
+  group2:
+    emails:
+      - test2@example.com
+        files:
+      - test_file.rb

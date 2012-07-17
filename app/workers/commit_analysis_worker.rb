@@ -16,7 +16,7 @@ class CommitAnalysisWorker
       git_analyzer = repo.git_analyzer
       fix_cache_analyzer = Bugwatch::FixCacheAnalyzer.new(git_analyzer.repo, repo.bug_fixes.map(&:bugwatch))
       git_analyzer.on_commit << CommitAnalyzer.new(repo)
-      git_analyzer.on_commit << FileChangeAnalyzer
+      git_analyzer.on_commit << FileChangeAnalyzer.new(repo_name)
       git_analyzer.on_commit << fix_cache_analyzer
       git_analyzer.add(commit_sha)
       commit = Commit.find_by_sha_and_repo_id(commit_sha, repo.id)

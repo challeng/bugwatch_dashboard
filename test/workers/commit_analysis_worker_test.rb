@@ -51,7 +51,6 @@ class CommitAnalysisWorkerTest < ActiveSupport::TestCase
     git_analyzer.stubs(:mine_for_commits).returns([grit_commit])
     grit_commit.stubs(:extend).with(CommitFu::FlogCommit).returns(grit_commit)
     Bugwatch::Commit.stubs(:new).with(grit_commit).returns(bugwatch_commit)
-    FileChangeAnalyzer.stubs(:call)
   end
 
 
@@ -162,9 +161,10 @@ class CommitAnalysisWorkerTest < ActiveSupport::TestCase
     sut.perform(repo_name, repo_url, commit.sha)
   end
 
-  test "#perform calls FileChangeAnalyzer" do
-    FileChangeAnalyzer.unstub(:call)
-    FileChangeAnalyzer.expects(:call).with(bugwatch_commit)
+  test "#perform initializes and calls FileChangeAnalyzer" do
+    file_change_analyzer = FileChangeAnalyzer.new(repo_name)
+    FileChangeAnalyzer.expects(:new).with(repo_name).returns(file_change_analyzer)
+    file_change_analyzer.expects(:call).with(bugwatch_commit)
     sut.perform(repo_name, repo_url, commit.sha)
   end
 
