@@ -19,7 +19,7 @@ class FileChangeAnalyzerTest < ActiveSupport::TestCase
   test "#call sends notification email to group if a file they subscribe to are touched" do
     AppConfig.stubs(:file_changes).returns(get_config(%w(file.rb file1.rb)))
     commit.stubs(:files).returns(['file1.rb'])
-    NotificationMailer.expects(:file_change).with(["file1.rb"], email_list).returns(mailer)
+    NotificationMailer.expects(:file_change).with(["file1.rb"], email_list, commit).returns(mailer)
     mailer.expects(:deliver)
     sut.call(commit)
   end
@@ -31,8 +31,8 @@ class FileChangeAnalyzerTest < ActiveSupport::TestCase
                                             "group2" => {"files" => %w(file.rb), "emails" => group2_email_list}}})
     commit.stubs(:files).returns(%w(file.rb))
     mailer2 = stub
-    NotificationMailer.expects(:file_change).with(%w(file.rb), group_email_list).returns(mailer)
-    NotificationMailer.expects(:file_change).with(%w(file.rb), group2_email_list).returns(mailer2)
+    NotificationMailer.expects(:file_change).with(%w(file.rb), group_email_list, commit).returns(mailer)
+    NotificationMailer.expects(:file_change).with(%w(file.rb), group2_email_list, commit).returns(mailer2)
     mailer.expects(:deliver)
     mailer2.expects(:deliver)
     sut.call(commit)
@@ -55,7 +55,7 @@ class FileChangeAnalyzerTest < ActiveSupport::TestCase
   test "#call matches file patterns" do
     AppConfig.stubs(:file_changes).returns(get_config(%w(app/*.rb)))
     commit.stubs(:files).returns(%w(app/file.rb))
-    NotificationMailer.expects(:file_change).with(%w(app/file.rb), email_list).returns(mailer)
+    NotificationMailer.expects(:file_change).with(%w(app/file.rb), email_list, commit).returns(mailer)
     mailer.expects(:deliver)
     sut.call(commit)
   end
