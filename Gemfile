@@ -12,7 +12,7 @@ gem 'commit_fu', :path => "vendor/gems/commit_fu-0.1"
 gem 'sinatra'
 gem 'resque'
 gem 'httparty'
-gem 'nokogiri'
+gem 'nokogiri', '1.5.4'
 
 gem 'ruby-openid'
 gem 'rack-openid'
