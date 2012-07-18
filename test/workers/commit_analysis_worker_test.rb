@@ -162,8 +162,8 @@ class CommitAnalysisWorkerTest < ActiveSupport::TestCase
   end
 
   test "#perform initializes and calls FileChangeAnalyzer" do
-    file_change_analyzer = FileChangeAnalyzer.new(repo_name)
-    FileChangeAnalyzer.expects(:new).with(repo_name).returns(file_change_analyzer)
+    file_change_analyzer = FileChangeAnalyzer.new(repo)
+    FileChangeAnalyzer.expects(:new).with(repo).returns(file_change_analyzer)
     file_change_analyzer.expects(:call).with(bugwatch_commit)
     sut.perform(repo_name, repo_url, commit.sha)
   end
