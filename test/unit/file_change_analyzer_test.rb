@@ -2,18 +2,19 @@ require 'test_helper'
 
 class FileChangeAnalyzerTest < ActiveSupport::TestCase
 
-  attr_reader :commit, :sut, :email_list, :mailer, :repo_name
+  attr_reader :commit, :sut, :email_list, :mailer, :repo_name, :emails_to_ignore
 
   def setup
-    @commit = Bugwatch::Commit.new(stub)
+    @commit = stub("Bugwatch::Commit", :grit => stub(:committer => stub(:email => "committer@example.com")))
     @email_list = %w(test@example.com test2@example.com)
+    @emails_to_ignore = %w(bad_committer@example.com)
     @mailer = stub("NotificationMailer")
     @repo_name = "repo_name"
     @sut = FileChangeAnalyzer.new(Repo.new(name: repo_name))
   end
 
   def get_config(files)
-    {repo_name => {"group1" => {"files" => files, "emails" => email_list}}}
+    {repo_name => {"group1" => {"files" => files, "emails" => email_list, "committers_to_ignore" => emails_to_ignore}}}
   end
 
   test "#call sends notification email to group if a file they subscribe to are touched" do
@@ -41,6 +42,13 @@ class FileChangeAnalyzerTest < ActiveSupport::TestCase
   test "#call does not send email if no groups" do
     commit.expects(:files).never
     AppConfig.stubs(:file_changes).returns({})
+    NotificationMailer.expects(:file_change).never
+    sut.call(commit)
+  end
+
+  test "#call does not send email if the committer's email is on the committers_to_ignore list" do
+    AppConfig.stubs(:file_changes).returns({repo_name => {"group1" => {"files" => ["file1.rb"], "emails" => email_list, "committers_to_ignore" => %w(committer@example.com)}}})
+    FileChangeAnalyzer.expects(:file_changes).never
     NotificationMailer.expects(:file_change).never
     sut.call(commit)
   end
