@@ -5,7 +5,7 @@ class FileChangeAnalyzerTest < ActiveSupport::TestCase
   attr_reader :commit, :sut, :email_list, :mailer, :repo_name, :emails_to_ignore
 
   def setup
-    @commit = stub("Bugwatch::Commit", :grit => stub(:committer => stub(:email => "committer@example.com")))
+    @commit = Bugwatch::Commit.new(stub("Grit::Commit", :committer => stub(:email => "committer@example.com")))
     @email_list = %w(test@example.com test2@example.com)
     @emails_to_ignore = %w(bad_committer@example.com)
     @mailer = stub("NotificationMailer")
@@ -47,7 +47,7 @@ class FileChangeAnalyzerTest < ActiveSupport::TestCase
   end
 
   test "#call does not send email if the committer's email is on the ignore list" do
-    AppConfig.stubs(:file_changes).returns({repo_name => {"group1" => {"files" => ["file1.rb"], "emails" => email_list, "ignore" => %w(committer@example.com)}}})
+    AppConfig.stubs(:file_changes).returns({repo_name => {"group1" => {"files" => ["file1.rb"], "emails" => email_list, "ignore" => [commit.grit.committer.email]}}})
     FileChangeAnalyzer.expects(:file_changes).never
     NotificationMailer.expects(:file_change).never
     sut.call(commit)
