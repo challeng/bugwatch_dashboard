@@ -4,7 +4,7 @@ repo_name:
       - test@example.com
     files:
       - test.rb
-    committers_to_ignore:
+    ignore:
       - test_email@example.com
   group2:
     emails:

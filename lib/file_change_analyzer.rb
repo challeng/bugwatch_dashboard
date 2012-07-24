@@ -9,15 +9,15 @@ class FileChangeAnalyzer
   def call(commit)
     config.each do |_, group|
 
-      unless(bad_committer? group['committers_to_ignore'] || [], commit.grit.committer.email )
-        files_to_email = file_changes(commit.files, group['files'])
-        NotificationMailer.file_change(files_to_email, group['emails'], commit, @repo).deliver unless files_to_email.empty?
-      end
+      next if ignore_group?(Array(group['ignore']), commit.grit.committer.email)
+
+      files_to_email = file_changes(commit.files, group['files'])
+      NotificationMailer.file_change(files_to_email, group['emails'], commit, @repo).deliver unless files_to_email.empty?
 
     end
   end
 
-  def bad_committer?(committers_to_ignore = [], committer_email)
+  def ignore_group?(committers_to_ignore, committer_email)
     committers_to_ignore.include? committer_email
   end
 

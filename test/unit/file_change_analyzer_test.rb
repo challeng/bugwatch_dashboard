@@ -14,7 +14,7 @@ class FileChangeAnalyzerTest < ActiveSupport::TestCase
   end
 
   def get_config(files)
-    {repo_name => {"group1" => {"files" => files, "emails" => email_list, "committers_to_ignore" => emails_to_ignore}}}
+    {repo_name => {"group1" => {"files" => files, "emails" => email_list, "ignore" => emails_to_ignore}}}
   end
 
   test "#call sends notification email to group if a file they subscribe to are touched" do
@@ -46,8 +46,8 @@ class FileChangeAnalyzerTest < ActiveSupport::TestCase
     sut.call(commit)
   end
 
-  test "#call does not send email if the committer's email is on the committers_to_ignore list" do
-    AppConfig.stubs(:file_changes).returns({repo_name => {"group1" => {"files" => ["file1.rb"], "emails" => email_list, "committers_to_ignore" => %w(committer@example.com)}}})
+  test "#call does not send email if the committer's email is on the ignore list" do
+    AppConfig.stubs(:file_changes).returns({repo_name => {"group1" => {"files" => ["file1.rb"], "emails" => email_list, "ignore" => %w(committer@example.com)}}})
     FileChangeAnalyzer.expects(:file_changes).never
     NotificationMailer.expects(:file_change).never
     sut.call(commit)
