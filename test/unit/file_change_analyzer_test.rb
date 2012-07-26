@@ -2,14 +2,24 @@ require 'test_helper'
 
 class FileChangeAnalyzerTest < ActiveSupport::TestCase
 
-  attr_reader :commit, :sut, :email_list, :mailer, :repo_name, :emails_to_ignore
+  attr_reader :commit, :sut, :email_list, :mailer, :repo_name, :emails_to_ignore, :diff, :filename, :diff_text
 
   def setup
-    @commit = Bugwatch::Commit.new(stub("Grit::Commit", :committer => stub(:email => "committer@example.com")))
     @email_list = %w(test@example.com test2@example.com)
     @emails_to_ignore = %w(bad_committer@example.com)
     @mailer = stub("NotificationMailer")
     @repo_name = "repo_name"
+    @filename = 'file.rb'
+
+    @diff_text = 'raw diff'
+    @diff = Bugwatch::Diff.new(stub)
+    @diff.stubs(:path).returns(filename)
+    @diff.stubs(:diff).returns(diff_text)
+
+    @commit = Bugwatch::Commit.new(stub("Grit::Commit", :committer => stub(:email => "committer@example.com")))
+    @commit.stubs(:diffs).returns([diff])
+    @commit.stubs(:files).returns([filename])
+
     @sut = FileChangeAnalyzer.new(Repo.new(name: repo_name))
   end
 
@@ -17,10 +27,24 @@ class FileChangeAnalyzerTest < ActiveSupport::TestCase
     {repo_name => {"group1" => {"files" => files, "emails" => email_list, "ignore" => emails_to_ignore}}}
   end
 
+  test "#call sends notification email that includes the diffs for the right files" do
+    AppConfig.stubs(:file_changes).returns(get_config([filename]))
+
+    diff2 = Bugwatch::Diff.new(stub)
+    diff2.stubs(:path).returns('bad_file.rb')
+    diff2.stubs(:diff).returns("bad diff")
+    commit.stubs(:diffs).returns([diff, diff2])
+
+    NotificationMailer.expects(:file_change).with([filename], email_list, commit, @sut.repo, diff_text).returns(mailer)
+    mailer.expects(:deliver)
+
+    sut.call(commit)
+
+  end
+
   test "#call sends notification email to group if a file they subscribe to are touched" do
     AppConfig.stubs(:file_changes).returns(get_config(%w(file.rb file1.rb)))
-    commit.stubs(:files).returns(['file1.rb'])
-    NotificationMailer.expects(:file_change).with(["file1.rb"], email_list, commit, @sut.repo).returns(mailer)
+    NotificationMailer.expects(:file_change).with([filename], email_list, commit, @sut.repo, diff_text).returns(mailer)
     mailer.expects(:deliver)
     sut.call(commit)
   end
@@ -32,8 +56,8 @@ class FileChangeAnalyzerTest < ActiveSupport::TestCase
                                             "group2" => {"files" => %w(file.rb), "emails" => group2_email_list}}})
     commit.stubs(:files).returns(%w(file.rb))
     mailer2 = stub
-    NotificationMailer.expects(:file_change).with(%w(file.rb), group_email_list, commit, @sut.repo).returns(mailer)
-    NotificationMailer.expects(:file_change).with(%w(file.rb), group2_email_list, commit, @sut.repo).returns(mailer2)
+    NotificationMailer.expects(:file_change).with(%w(file.rb), group_email_list, commit, @sut.repo, diff_text).returns(mailer)
+    NotificationMailer.expects(:file_change).with(%w(file.rb), group2_email_list, commit, @sut.repo, diff_text).returns(mailer2)
     mailer.expects(:deliver)
     mailer2.expects(:deliver)
     sut.call(commit)
@@ -62,8 +86,15 @@ class FileChangeAnalyzerTest < ActiveSupport::TestCase
 
   test "#call matches file patterns" do
     AppConfig.stubs(:file_changes).returns(get_config(%w(app/*.rb)))
-    commit.stubs(:files).returns(%w(app/file.rb))
-    NotificationMailer.expects(:file_change).with(%w(app/file.rb), email_list, commit, @sut.repo).returns(mailer)
+    dir_filename = "app/#{filename}"
+
+    new_diff = Bugwatch::Diff.new(stub)
+    new_diff.stubs(:path).returns(dir_filename)
+    new_diff.stubs(:diff).returns(diff_text)
+
+    commit.stubs(:files).returns([dir_filename])
+    commit.stubs(:diffs).returns([new_diff])
+    NotificationMailer.expects(:file_change).with([dir_filename], email_list, commit, @sut.repo, diff_text).returns(mailer)
     mailer.expects(:deliver)
     sut.call(commit)
   end

@@ -12,8 +12,10 @@ class FileChangeAnalyzer
       next if ignore_group?(Array(group['ignore']), commit.grit.committer.email)
 
       files_to_email = file_changes(commit.files, group['files'])
-      NotificationMailer.file_change(files_to_email, group['emails'], commit, @repo).deliver unless files_to_email.empty?
+      diffs = commit.diffs.select {|diff| files_to_email.include? diff.path }
+      diffs_string = diffs.map(&:diff).join("\n")
 
+      NotificationMailer.file_change(files_to_email, group['emails'], commit, @repo, diffs_string).deliver unless files_to_email.empty?
     end
   end
 

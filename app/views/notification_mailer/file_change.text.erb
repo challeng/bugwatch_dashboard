@@ -8,3 +8,6 @@ The following files have been changed by <%= @commit.grit.author.email %> :
 
 Here is a link to the commit:
 <%= commit_repo_url @repo, @commit.sha %>
+
+The diff for these files:
+<%= @diff_string %>
