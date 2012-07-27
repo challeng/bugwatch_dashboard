@@ -85,13 +85,8 @@ class FileChangeAnalyzerTest < ActiveSupport::TestCase
     AppConfig.stubs(:file_changes).returns(get_config(%w(app/*.rb)))
     dir_filename = "app/#{filename}"
 
-    diff = Bugwatch::Diff.new(stub)
-    diff.stubs(:path).returns(dir_filename)
-    diff.stubs(:diff).returns('diff_text')
-
     commit.stubs(:files).returns([dir_filename])
-    commit.stubs(:diffs).returns([diff])
-    NotificationMailer.expects(:file_change).with([dir_filename], email_list, commit, @sut.repo, 'diff_text').returns(mailer)
+    NotificationMailer.expects(:file_change).with([dir_filename], email_list, commit, @sut.repo, '').returns(mailer)
     mailer.expects(:deliver)
     sut.call(commit)
   end
